@@ -2,8 +2,8 @@
 TO DO
 
 - implementation of structures
-  - neighborhood matrix
+  - adjacency matrix
   - incident matrix
-  - neighborhood list
+  - adjacency list
 - implementation of Prims' MST algorithm
 - implementation of Dijkstra algorithm
