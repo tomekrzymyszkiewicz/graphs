@@ -242,16 +242,22 @@ struct incident_matrix{
     };
     bool add_edge_undir(int src_vertex, int dst_vertex){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
-            for(int i = 0; i < this->number_of_edges-1; i++){
+            for(int i = 0; i < this->number_of_edges; i++){
                 int source = 0;
                 int destination = 0;
                 for(int j = 0; j < this->number_of_vertices; j++){
-                    if(this->matrix[i][j] == 1)
-                       source = j;
-                    if(this->matrix[i][j] == -1)
-                       destination = j;
+                    if(this->matrix[i][j] == 1){
+                        source = j;
+                        break;
+                    }
                 }
-                if(source == src_vertex && destination == dst_vertex){
+                for(int j = 0; j < this->number_of_vertices; j++){
+                    if(this->matrix[i][j] == 1 && j != source){
+                        destination = j;
+                        break;
+                    }
+                }
+                if(source == src_vertex && destination == dst_vertex || source == dst_vertex && destination == src_vertex){
                     return true; //edge already exist
                 }
             }
