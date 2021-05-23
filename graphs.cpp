@@ -123,7 +123,7 @@ struct adjacency_list{
         delete[] this->array_of_lists;
         this->array_of_lists = temp_array_of_lists;
     };
-    bool add_edge(int src_vertex, int dst_vertex, int weight = 1){
+    bool add_edge_dir(int src_vertex, int dst_vertex, int weight = 1){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
             node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
             if(source_node == nullptr){
@@ -135,6 +135,34 @@ struct adjacency_list{
                 }
                 current_node->next = new node(dst_vertex,weight);
             }
+            return true;
+        }else{
+            return false;
+        }
+    };
+    bool add_edge_undir(int src_vertex, int dst_vertex, int weight = 1){
+        if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
+            node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
+            if(source_node == nullptr){
+                source_node = new node(dst_vertex,weight);
+            }else{
+                node* current_node = this->array_of_lists[src_vertex];
+                while(current_node->next != nullptr){
+                    current_node = current_node->next;
+                }
+                current_node->next = new node(dst_vertex,weight);
+            }
+            node*& second_direction_source_node = this->array_of_lists[dst_vertex]; //reference to pointer
+            if(second_direction_source_node == nullptr){
+                second_direction_source_node = new node(src_vertex,weight);
+            }else{
+                node* current_node = this->array_of_lists[dst_vertex];
+                while(current_node->next != nullptr){
+                    current_node = current_node->next;
+                }
+                current_node->next = new node(src_vertex,weight);
+            }
+
             return true;
         }else{
             return false;
@@ -294,54 +322,41 @@ bool prim_adjency_matrix(adjacency_matrix matrix, int start_vertex){
 }
 
 int main(){
-    adjacency_matrix matrix = adjacency_matrix(5);
-    printf("======\n");
-    printf("======\n");
-    matrix.add_edge_undir(1,2,10);
-    matrix.add_edge_undir(1,4,1);
-    matrix.add_edge_undir(2,3,5);
-    matrix.add_edge_undir(2,0,5);
-    matrix.add_edge_undir(3,4,3);
-    matrix.print();
+    // adjacency_matrix matrix = adjacency_matrix(5);
+    // printf("======\n");
+    // printf("======\n");
+    // matrix.add_edge_undir(1,2,10);
+    // matrix.add_edge_undir(1,4,1);
+    // matrix.add_edge_undir(2,3,5);
+    // matrix.add_edge_undir(2,0,5);
+    // matrix.add_edge_undir(3,4,3);
+    // matrix.print();
 
-    // adjacency_list list = adjacency_list();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_vertex();
-    // list.print();
-    // list.add_edge(0,3,1);
-    // list.print();
-    // list.add_edge(3,4,5);
-    // list.print();
-    // list.add_edge(7,3,1);
-    // list.print();
-    // list.add_edge(4,3,2);
-    // list.print();
-    // list.add_edge(4,5,2);
-    // list.print();
-    // list.add_edge(4,7,100);
-    // list.print();
+    adjacency_list list = adjacency_list();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_vertex();
+    list.add_edge_undir(0,3,1);
+    list.print();
+    list.add_edge_undir(3,4,5);
+    list.print();
+    list.add_edge_undir(7,3,1);
+    list.print();
+    list.add_edge_undir(4,3,2);
+    list.print();
+    list.add_edge_undir(4,5,2);
+    list.print();
+    list.add_edge_undir(4,7,100);
+    list.print();
 
 
     // incident_matrix inc = incident_matrix();
