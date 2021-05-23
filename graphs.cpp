@@ -22,9 +22,19 @@ struct adjacency_matrix{
         this->number_of_vertices = number_of_vertices;
     };
     void print(){
+        printf("   |");
         for(int i = 0; i < this->number_of_vertices; i++){
+            printf("%3d ", i);
+        }
+        printf("\n----");
+        for(int i = 0; i < this->number_of_vertices; i++){
+            printf("----", i);
+        }
+        printf("\n");
+        for(int i = 0; i < this->number_of_vertices; i++){
+            printf("%3d|",i);
             for(int j = 0; j < this->number_of_vertices; j++){
-                printf("%2d",this->matrix[i][j]);
+                printf("%3d ",this->matrix[i][j]);
             }
             printf("\n");
         }
@@ -43,9 +53,9 @@ struct adjacency_matrix{
         delete[] this->matrix;
         this->matrix = temp_matrix;
     };
-    bool add_edge(int src_vertex, int dst_vertex){
+    bool add_edge(int src_vertex, int dst_vertex, int weight = 1){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
-            this->matrix[src_vertex][dst_vertex] = 1;
+            this->matrix[src_vertex][dst_vertex] = weight;
             return true;
         }else{
             return false;
@@ -84,10 +94,10 @@ struct adjacency_list{
     };
     void print(){
         for(int i = 0; i < this->number_of_vertices; i++){
-            printf("vertex %3d ->",i);
+            printf("V %3d ->",i);
             node *current_node = array_of_lists[i];
             while(current_node){
-                printf(" {vertex: %3d|weight: %3d},",current_node->dst,current_node->weight);
+                printf(" {V: %3d|W: %3d},",current_node->dst,current_node->weight);
                 current_node = current_node->next;
             }
             printf("\n");
@@ -100,7 +110,7 @@ struct adjacency_list{
         delete[] this->array_of_lists;
         this->array_of_lists = temp_array_of_lists;
     };
-    bool add_edge(int src_vertex, int dst_vertex, int weight){
+    bool add_edge(int src_vertex, int dst_vertex, int weight = 1){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
             node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
             if(source_node == nullptr){
@@ -120,22 +130,21 @@ struct adjacency_list{
 };
 
 int main(){
-    // adjacency_matrix matrix = adjacency_matrix(10);
-    // matrix.print();
-    // printf("======\n");
-    // matrix.add_vertex();
-    // matrix.print();
-    // printf("======\n");
-    // matrix.add_edge(1,2);
-    // matrix.add_edge(2,3);
-    // matrix.add_edge(3,4);
-    // matrix.print();
+    adjacency_matrix matrix = adjacency_matrix(2);
+    printf("======\n");
+    matrix.add_vertex();
+    printf("======\n");
+    matrix.add_edge(1,2,10);
+    matrix.add_edge(2,3,5);
+    matrix.add_edge(3,4,3);
+    matrix.print();
     adjacency_list list = adjacency_list(10);
     list.add_edge(0,3,1);
     list.add_edge(3,4,5);
     list.add_edge(7,3,1);
     list.add_edge(4,3,2);
     list.add_edge(4,5,2);
+    list.add_edge(4,7,100);
     list.print();
 
     return 0;
