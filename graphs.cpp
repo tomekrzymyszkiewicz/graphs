@@ -129,23 +129,85 @@ struct adjacency_list{
     };
 };
 
+struct incident_matrix{
+    int ***matrix;
+    int number_of_vertices;
+    int number_of_edges;
+    incident_matrix(){
+        matrix = new int**[0];
+        matrix[0] = new int*[3];
+        matrix[0][0] = new int[0];
+        matrix[0][1] = 0;
+        matrix[0][2] = 0;
+        number_of_vertices = 0;
+        number_of_edges = 0;
+    };
+    incident_matrix(int number_of_vertices, int number_of_edges){
+        matrix = new int**[number_of_edges];
+        for(int i = 0; i < number_of_edges; i++){
+            matrix[i] = new int*[3];
+            matrix[i][0] = new int[number_of_vertices]; //0 - pointer do array of vertex
+            memset(matrix[i][0],0,number_of_vertices*sizeof(int)); //filled with 0
+            matrix[i][1] = 0; // 1 - source vertex
+            matrix[i][2] = 0; // 2 - destination vertex
+        }
+        this->number_of_vertices = number_of_vertices;
+        this->number_of_edges = number_of_edges;
+    };
+    void print(){
+        printf("   |");
+        for(int i = 0; i < this->number_of_edges; i++){
+            printf("%2d->%2d ", this->matrix[i][1],this->matrix[i][2]);
+        }
+        printf("\n----");
+        for(int i = 0; i < this->number_of_edges; i++){
+            printf("-------", i);
+        }
+        printf("\n");
+        for(int i = 0; i < this->number_of_vertices; i++){
+            printf("%3d|",i);
+            for(int j = 0; j < this->number_of_edges; j++){
+                printf(" %5d ",this->matrix[j][0][i]);
+            }
+            printf("\n");
+        }
+    };
+    void add_vertex(){
+        this->number_of_vertices = this->number_of_vertices+1;
+        int ***temp_matrix = new int**[this->number_of_edges];
+        for(int i = 0; i < this->number_of_edges; i++){
+            temp_matrix[i] = new int*[3];
+            temp_matrix[i][0] = new int[this->number_of_vertices];
+            memcpy(temp_matrix[i][0],this->matrix[i][0],(this->number_of_vertices-1)*sizeof(int));
+            temp_matrix[i][1] = this->matrix[i][1];
+            temp_matrix[i][2] = this->matrix[i][2];
+        }
+        delete[] this->matrix;
+        this->matrix = temp_matrix;
+    };
+};
+
 int main(){
-    adjacency_matrix matrix = adjacency_matrix(2);
-    printf("======\n");
-    matrix.add_vertex();
-    printf("======\n");
-    matrix.add_edge(1,2,10);
-    matrix.add_edge(2,3,5);
-    matrix.add_edge(3,4,3);
-    matrix.print();
-    adjacency_list list = adjacency_list(10);
-    list.add_edge(0,3,1);
-    list.add_edge(3,4,5);
-    list.add_edge(7,3,1);
-    list.add_edge(4,3,2);
-    list.add_edge(4,5,2);
-    list.add_edge(4,7,100);
-    list.print();
+    // adjacency_matrix matrix = adjacency_matrix(2);
+    // printf("======\n");
+    // matrix.add_vertex();
+    // printf("======\n");
+    // matrix.add_edge(1,2,10);
+    // matrix.add_edge(2,3,5);
+    // matrix.add_edge(3,4,3);
+    // matrix.print();
+    // adjacency_list list = adjacency_list(10);
+    // list.add_edge(0,3,1);
+    // list.add_edge(3,4,5);
+    // list.add_edge(7,3,1);
+    // list.add_edge(4,3,2);
+    // list.add_edge(4,5,2);
+    // list.add_edge(4,7,100);
+    // list.print();
+    incident_matrix inc = incident_matrix(5,10);
+    inc.print();
+    inc.add_vertex();
+    inc.print();
 
     return 0;
 }
