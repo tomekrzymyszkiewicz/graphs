@@ -346,9 +346,9 @@ adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
     int v = start_vertex;
     // int *node = new int[3]; // 0 - src 1 - dsc 2 - weight
     visited[v] = true;
+    pq = priority_queue<node, vector<node>, node::compare>();
     for(int i = 0; i < graph_matrix.number_of_vertices-1; i++){
-        pq = priority_queue<node, vector<node>, node::compare>();
-        int current_vertex = graph_matrix.matrix[v][0];
+        // int current_vertex = graph_matrix.matrix[v][0];
         for(int j = 0; j < graph_matrix.number_of_vertices; j++){
             if(graph_matrix.matrix[v][j] != 0 && !visited[j]){
                 // node[0] = v;
@@ -358,12 +358,13 @@ adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
             }
         }
         visited[v] = true;
-        MST->add_edge_undir(v,pq.top().destination,pq.top().weight);
+        while(visited[pq.top().destination]){
+            pq.pop();
+        }
+        MST->add_edge_undir(pq.top().source,pq.top().destination,pq.top().weight);
         MST_weight += pq.top().weight;
         v = pq.top().destination;
-        // MST->add_edge_undir(v,pq.top()[1],pq.top()[2]);
-        // MST_weight += pq.top()[2];
-        // v = pq.top()[1];
+        pq.pop();
     }
     return MST;
 }
@@ -393,8 +394,9 @@ adjacency_list* prim(adjacency_list graph_list, int start_vertex){
 
 int main(){
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
-    adjacency_matrix matrix = adjacency_matrix(8);
+    adjacency_matrix matrix = adjacency_matrix(9);
     printf("======\n");
+    matrix.add_edge_undir(0,8,1);
     matrix.add_edge_undir(0,1,5);
     matrix.add_edge_undir(0,3,9);
     matrix.add_edge_undir(0,6,3);
