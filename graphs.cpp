@@ -137,8 +137,8 @@ struct incident_matrix{
         matrix = new int**[0];
         matrix[0] = new int*[3];
         matrix[0][0] = new int[0];
-        matrix[0][1] = 0;
-        matrix[0][2] = 0;
+        matrix[0][1] = new int[0];
+        matrix[0][2] = new int[0];
         number_of_vertices = 0;
         number_of_edges = 0;
     };
@@ -148,8 +148,10 @@ struct incident_matrix{
             matrix[i] = new int*[3];
             matrix[i][0] = new int[number_of_vertices]; //0 - pointer do array of vertex
             memset(matrix[i][0],0,number_of_vertices*sizeof(int)); //filled with 0
-            matrix[i][1] = 0; // 1 - source vertex
-            matrix[i][2] = 0; // 2 - destination vertex
+            matrix[i][1] = new int[0]; // 1 - source vertex
+            memset(matrix[i][1],0,sizeof(int));
+            matrix[i][2] = new int[0]; // 2 - destination vertex
+            memset(matrix[i][2],0,sizeof(int));
         }
         this->number_of_vertices = number_of_vertices;
         this->number_of_edges = number_of_edges;
@@ -157,17 +159,17 @@ struct incident_matrix{
     void print(){
         printf("   |");
         for(int i = 0; i < this->number_of_edges; i++){
-            printf("%2d->%2d ", this->matrix[i][1],this->matrix[i][2]);
+            printf("%2d-%2d ", this->matrix[i][1][0],this->matrix[i][2][0]);
         }
         printf("\n----");
         for(int i = 0; i < this->number_of_edges; i++){
-            printf("-------", i);
+            printf("------", i);
         }
         printf("\n");
         for(int i = 0; i < this->number_of_vertices; i++){
             printf("%3d|",i);
             for(int j = 0; j < this->number_of_edges; j++){
-                printf(" %5d ",this->matrix[j][0][i]);
+                printf(" %4d ",this->matrix[j][0][i]);
             }
             printf("\n");
         }
@@ -179,11 +181,48 @@ struct incident_matrix{
             temp_matrix[i] = new int*[3];
             temp_matrix[i][0] = new int[this->number_of_vertices];
             memcpy(temp_matrix[i][0],this->matrix[i][0],(this->number_of_vertices-1)*sizeof(int));
+            temp_matrix[i][0][this->number_of_vertices-1] = 0;
             temp_matrix[i][1] = this->matrix[i][1];
             temp_matrix[i][2] = this->matrix[i][2];
         }
         delete[] this->matrix;
         this->matrix = temp_matrix;
+    };
+    bool add_edge(int src_vertex, int dst_vertex){
+        if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
+            for(int i = 0; i < this->number_of_edges-1; i++){
+                if(this->matrix[i][1][0] == src_vertex && this->matrix[i][2][0] == dst_vertex){
+                    this->matrix[i][0][src_vertex] = 1;
+                    this->matrix[i][0][dst_vertex] = -1;
+                    return true;
+                }
+            }
+            this->number_of_edges = this->number_of_edges+1;
+            int ***temp_matrix = new int**[this->number_of_edges];
+            for(int i = 0; i < this->number_of_edges-1; i++){
+                temp_matrix[i] = new int*[3];
+                temp_matrix[i][0] = new int[this->number_of_vertices];
+                temp_matrix[i][1] = new int[1];
+                temp_matrix[i][2] = new int[2];
+                memcpy(temp_matrix[i][0],this->matrix[i][0],this->number_of_vertices*sizeof(int));
+                memcpy(temp_matrix[i][1],this->matrix[i][1],sizeof(int));
+                memcpy(temp_matrix[i][2],this->matrix[i][2],sizeof(int));
+            }
+            temp_matrix[this->number_of_edges-1] = new int*[3];
+            temp_matrix[this->number_of_edges-1][0] = new int[this->number_of_vertices];
+            temp_matrix[this->number_of_edges-1][1] = new int[1];
+            temp_matrix[this->number_of_edges-1][1][0] = src_vertex;
+            temp_matrix[this->number_of_edges-1][2] = new int[2];
+            temp_matrix[this->number_of_edges-1][2][0] = dst_vertex;
+            memset(temp_matrix[this->number_of_edges-1][0],0,this->number_of_vertices*sizeof(int));
+            temp_matrix[this->number_of_edges-1][0][src_vertex] = 1;
+            temp_matrix[this->number_of_edges-1][0][dst_vertex] = -1;
+            delete[] this->matrix;
+            this->matrix = temp_matrix;
+            return true;
+        }else{
+            return false;
+        }
     };
 };
 
@@ -204,9 +243,19 @@ int main(){
     // list.add_edge(4,5,2);
     // list.add_edge(4,7,100);
     // list.print();
-    incident_matrix inc = incident_matrix(5,10);
-    inc.print();
+    incident_matrix inc = incident_matrix();
     inc.add_vertex();
+    inc.add_vertex();
+    inc.add_vertex();
+    inc.add_vertex();
+    inc.add_vertex();
+    inc.add_vertex();
+    inc.add_edge(2,3);
+    inc.add_edge(3,2);
+    inc.add_edge(3,2);
+    inc.add_edge(3,5);
+    inc.add_edge(4,3);
+    inc.add_edge(1,3);
     inc.print();
 
     return 0;
