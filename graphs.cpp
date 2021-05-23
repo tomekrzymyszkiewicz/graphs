@@ -133,103 +133,6 @@ struct adjacency_list{
     };
 };
 
-// struct incident_matrix{
-//     int ***matrix;
-//     int number_of_vertices;
-//     int number_of_edges;
-//     incident_matrix(){
-//         matrix = new int**[0];
-//         matrix[0] = new int*[3];
-//         matrix[0][0] = new int[0];
-//         matrix[0][1] = new int[0];
-//         matrix[0][2] = new int[0];
-//         number_of_vertices = 0;
-//         number_of_edges = 0;
-//     };
-//     incident_matrix(int number_of_vertices, int number_of_edges){
-//         matrix = new int**[number_of_edges];
-//         for(int i = 0; i < number_of_edges; i++){
-//             matrix[i] = new int*[3];
-//             matrix[i][0] = new int[number_of_vertices]; //0 - pointer do array of vertex
-//             memset(matrix[i][0],0,number_of_vertices*sizeof(int)); //filled with 0
-//             matrix[i][1] = new int[0]; // 1 - source vertex
-//             memset(matrix[i][1],0,sizeof(int));
-//             matrix[i][2] = new int[0]; // 2 - destination vertex
-//             memset(matrix[i][2],0,sizeof(int));
-//         }
-//         this->number_of_vertices = number_of_vertices;
-//         this->number_of_edges = number_of_edges;
-//     };
-//     void print(){
-//         printf("   |");
-//         for(int i = 0; i < this->number_of_edges; i++){
-//             printf("%2d-%2d ", this->matrix[i][1][0],this->matrix[i][2][0]);
-//         }
-//         printf("\n----");
-//         for(int i = 0; i < this->number_of_edges; i++){
-//             printf("------", i);
-//         }
-//         printf("\n");
-//         for(int i = 0; i < this->number_of_vertices; i++){
-//             printf("%3d|",i);
-//             for(int j = 0; j < this->number_of_edges; j++){
-//                 printf(" %4d ",this->matrix[j][0][i]);
-//             }
-//             printf("\n");
-//         }
-//     };
-//     void add_vertex(){
-//         this->number_of_vertices = this->number_of_vertices+1;
-//         int ***temp_matrix = new int**[this->number_of_edges];
-//         for(int i = 0; i < this->number_of_edges; i++){
-//             temp_matrix[i] = new int*[3];
-//             temp_matrix[i][0] = new int[this->number_of_vertices];
-//             memcpy(temp_matrix[i][0],this->matrix[i][0],(this->number_of_vertices-1)*sizeof(int));
-//             temp_matrix[i][0][this->number_of_vertices-1] = 0;
-//             temp_matrix[i][1] = this->matrix[i][1];
-//             temp_matrix[i][2] = this->matrix[i][2];
-//         }
-//         delete[] this->matrix;
-//         this->matrix = temp_matrix;
-//     };
-//     bool add_edge(int src_vertex, int dst_vertex){
-//         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
-//             for(int i = 0; i < this->number_of_edges-1; i++){
-//                 if(this->matrix[i][1][0] == src_vertex && this->matrix[i][2][0] == dst_vertex){
-//                     this->matrix[i][0][src_vertex] = 1;
-//                     this->matrix[i][0][dst_vertex] = -1;
-//                     return true;
-//                 }
-//             }
-//             this->number_of_edges = this->number_of_edges+1;
-//             int ***temp_matrix = new int**[this->number_of_edges];
-//             for(int i = 0; i < this->number_of_edges-1; i++){
-//                 temp_matrix[i] = new int*[3];
-//                 temp_matrix[i][0] = new int[this->number_of_vertices];
-//                 temp_matrix[i][1] = new int[1];
-//                 temp_matrix[i][2] = new int[1];
-//                 memcpy(temp_matrix[i][0],this->matrix[i][0],this->number_of_vertices*sizeof(int));
-//                 memcpy(temp_matrix[i][1],this->matrix[i][1],sizeof(int));
-//                 memcpy(temp_matrix[i][2],this->matrix[i][2],sizeof(int));
-//             }
-//             temp_matrix[this->number_of_edges-1] = new int*[3];
-//             temp_matrix[this->number_of_edges-1][0] = new int[this->number_of_vertices];
-//             temp_matrix[this->number_of_edges-1][1] = new int[1];
-//             temp_matrix[this->number_of_edges-1][1][0] = src_vertex;
-//             temp_matrix[this->number_of_edges-1][2] = new int[2];
-//             temp_matrix[this->number_of_edges-1][2][0] = dst_vertex;
-//             memset(temp_matrix[this->number_of_edges-1][0],0,this->number_of_vertices*sizeof(int));
-//             temp_matrix[this->number_of_edges-1][0][src_vertex] = 1;
-//             temp_matrix[this->number_of_edges-1][0][dst_vertex] = -1;
-//             delete[] this->matrix;
-//             this->matrix = temp_matrix;
-//             return true;
-//         }else{
-//             return false;
-//         }
-//     };
-// };
-
 struct incident_matrix{
     int **matrix;
     int number_of_vertices;
@@ -254,11 +157,27 @@ struct incident_matrix{
         for(int i = 0; i < this->number_of_edges; i++){
             int source = 0;
             int destination = 0;
+            bool directed = false;
             for(int j = 0; j < this->number_of_vertices; j++){
-                if(this->matrix[i][j] == 1)
+                if(this->matrix[i][j] == 1){
                     source = j;
-                if(this->matrix[i][j] == -1)
+                    break;
+                }
+            }
+            for(int j = 0; j < this->number_of_vertices; j++){
+                if(this->matrix[i][j] == -1){
                     destination = j;
+                    directed = true;
+                    break;
+                }
+            }
+            if(!directed){
+                for(int j = 0; j < this->number_of_vertices; j++){
+                if(this->matrix[i][j] == 1 && j != source){
+                    destination = j;
+                    break;
+                }
+            }
             }
             printf("%2d-%2d ", source, destination);
         }
@@ -283,10 +202,45 @@ struct incident_matrix{
             memcpy(temp_matrix[i],this->matrix[i],(this->number_of_vertices-1)*sizeof(int));
             temp_matrix[i][this->number_of_vertices-1] = 0;
         }
-        delete[] this->matrix;
+        if(this->number_of_vertices>1)
+            delete[] this->matrix;
         this->matrix = temp_matrix;
     };
     bool add_edge(int src_vertex, int dst_vertex){
+        if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
+            for(int i = 0; i < this->number_of_edges-1; i++){
+                int source = 0;
+                for(int j = 0; j < this->number_of_vertices; j++){
+                    if(this->matrix[i][j] == 1)
+                       source = j;
+                }
+                int destination = source;
+                for(int j = 0; j < this->number_of_vertices; j++){
+                    if(this->matrix[i][j] == -1)
+                       destination = j;
+                }
+                if(source == src_vertex && destination == dst_vertex){
+                    return true; //edge already exist
+                }
+            }
+            this->number_of_edges = this->number_of_edges+1;
+            int **temp_matrix = new int*[this->number_of_edges];
+            for(int i = 0; i < this->number_of_edges-1; i++){
+                temp_matrix[i] = new int[this->number_of_vertices];
+                memcpy(temp_matrix[i],this->matrix[i],this->number_of_vertices*sizeof(int));
+            }
+            temp_matrix[this->number_of_edges-1] = new int[this->number_of_vertices];
+            memset(temp_matrix[this->number_of_edges-1],0,this->number_of_vertices*sizeof(int));
+            temp_matrix[this->number_of_edges-1][src_vertex] = 1;
+            temp_matrix[this->number_of_edges-1][dst_vertex] = -1;
+            delete[] this->matrix;
+            this->matrix = temp_matrix;
+            return true;
+        }else{
+            return false;
+        }
+    };
+    bool add_edge_undir(int src_vertex, int dst_vertex){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
             for(int i = 0; i < this->number_of_edges-1; i++){
                 int source = 0;
@@ -310,7 +264,7 @@ struct incident_matrix{
             temp_matrix[this->number_of_edges-1] = new int[this->number_of_vertices];
             memset(temp_matrix[this->number_of_edges-1],0,this->number_of_vertices*sizeof(int));
             temp_matrix[this->number_of_edges-1][src_vertex] = 1;
-            temp_matrix[this->number_of_edges-1][dst_vertex] = -1;
+            temp_matrix[this->number_of_edges-1][dst_vertex] = 1;
             delete[] this->matrix;
             this->matrix = temp_matrix;
             return true;
@@ -381,12 +335,12 @@ int main(){
     inc.add_vertex();
     inc.add_vertex();
     inc.add_vertex();
-    inc.add_edge(2,3);
-    inc.add_edge(3,2);
-    inc.add_edge(3,2);
-    inc.add_edge(3,5);
-    inc.add_edge(4,3);
-    inc.add_edge(1,3);
+    inc.add_edge_undir(2,3);
+    inc.add_edge_undir(3,2);
+    inc.add_edge_undir(3,2);
+    inc.add_edge_undir(3,5);
+    inc.add_edge_undir(4,3);
+    inc.add_edge_undir(1,3);
     inc.print();
 
     return 0;
