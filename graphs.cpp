@@ -1,7 +1,7 @@
 #include<iostream>
 #include<string.h>
 #include<stdio.h>
-#include<list>
+#include<queue>
 #include<vector>
 using namespace std;
 
@@ -88,6 +88,11 @@ struct adjacency_list{
             this->next = next;
         }
     };
+    struct node_compare{
+        bool operator()(const node& a, node& b){
+            return a.weight>b.weight;
+        }
+    };
     node **array_of_lists;
     int number_of_vertices;
     adjacency_list(){
@@ -119,7 +124,6 @@ struct adjacency_list{
             temp_array_of_lists[i] = this->array_of_lists[i];
         }
         temp_array_of_lists[this->number_of_vertices-1] = nullptr;
-        // memcpy(temp_array_of_lists,this->array_of_lists,(this->number_of_vertices-1)*sizeof(this->array_of_lists[0]));
         delete[] this->array_of_lists;
         this->array_of_lists = temp_array_of_lists;
     };
@@ -162,7 +166,6 @@ struct adjacency_list{
                 }
                 current_node->next = new node(src_vertex,weight);
             }
-
             return true;
         }else{
             return false;
@@ -317,8 +320,27 @@ struct incident_matrix{
     };
 };
 
-bool prim_adjency_matrix(adjacency_matrix matrix, int start_vertex){
-
+adjacency_list* prim_adjency_list(adjacency_list graph_list, int start_vertex){
+    priority_queue<adjacency_list::node, vector<adjacency_list::node>, adjacency_list::node_compare> pq;
+    bool *visited = new bool[graph_list.number_of_vertices];
+    for(int i = 0; i < graph_list.number_of_vertices; i++)
+        visited[i] = false;
+    adjacency_list *MST = new adjacency_list(graph_list.number_of_vertices);
+    int MST_weight = 0;
+    int v = start_vertex;
+    visited[v] = true;
+    for(int i = 0; i < graph_list.number_of_vertices-1; i++){
+        pq = priority_queue<adjacency_list::node, vector<adjacency_list::node>, adjacency_list::node_compare>();
+        for(adjacency_list::node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next){
+            if(!visited[current_node->dst])
+                pq.push(*current_node);
+        }
+        visited[v] = true;
+        MST->add_edge_undir(v,pq.top().dst,pq.top().weight);
+        MST_weight += pq.top().weight;
+        v = pq.top().dst;
+    }
+    return MST;
 }
 
 int main(){
@@ -332,31 +354,26 @@ int main(){
     // matrix.add_edge_undir(3,4,3);
     // matrix.print();
 
-    adjacency_list list = adjacency_list();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_vertex();
-    list.add_edge_undir(0,3,1);
-    list.print();
-    list.add_edge_undir(3,4,5);
-    list.print();
-    list.add_edge_undir(7,3,1);
-    list.print();
-    list.add_edge_undir(4,3,2);
-    list.print();
+    adjacency_list list = adjacency_list(8);
+    //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
+    list.add_edge_undir(0,1,5);
+    list.add_edge_undir(0,3,9);
+    list.add_edge_undir(0,6,3);
+    list.add_edge_undir(1,5,6);
+    list.add_edge_undir(1,4,8);
+    list.add_edge_undir(1,7,7);
+    list.add_edge_undir(2,3,9);
+    list.add_edge_undir(2,4,4);
+    list.add_edge_undir(2,6,5);
+    list.add_edge_undir(2,7,3);
+    list.add_edge_undir(3,6,8);
     list.add_edge_undir(4,5,2);
+    list.add_edge_undir(4,6,1);
+    list.add_edge_undir(5,6,6);
+    list.add_edge_undir(6,7,9);
     list.print();
-    list.add_edge_undir(4,7,100);
-    list.print();
+    adjacency_list *mst = prim_adjency_list(list,0);
+    mst->print();
 
 
     // incident_matrix inc = incident_matrix();
