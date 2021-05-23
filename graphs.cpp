@@ -106,7 +106,11 @@ struct adjacency_list{
     void add_vertex(){
         this->number_of_vertices++;
         node **temp_array_of_lists = new node*[this->number_of_vertices];
-        memcpy(temp_array_of_lists,this->array_of_lists,(this->number_of_vertices-1)*sizeof(this->array_of_lists[0]));
+        for(int i = 0; i < this->number_of_vertices; i++){
+            temp_array_of_lists[i] = this->array_of_lists[i];
+        }
+        temp_array_of_lists[this->number_of_vertices-1] = nullptr;
+        // memcpy(temp_array_of_lists,this->array_of_lists,(this->number_of_vertices-1)*sizeof(this->array_of_lists[0]));
         delete[] this->array_of_lists;
         this->array_of_lists = temp_array_of_lists;
     };
@@ -227,36 +231,73 @@ struct incident_matrix{
 };
 
 int main(){
-    // adjacency_matrix matrix = adjacency_matrix(2);
+    // adjacency_matrix matrix = adjacency_matrix();
     // printf("======\n");
+    // matrix.add_vertex();
+    // matrix.add_vertex();
+    // matrix.add_vertex();
+    // matrix.add_vertex();
     // matrix.add_vertex();
     // printf("======\n");
     // matrix.add_edge(1,2,10);
     // matrix.add_edge(2,3,5);
     // matrix.add_edge(3,4,3);
     // matrix.print();
-    // adjacency_list list = adjacency_list(10);
-    // list.add_edge(0,3,1);
-    // list.add_edge(3,4,5);
-    // list.add_edge(7,3,1);
-    // list.add_edge(4,3,2);
-    // list.add_edge(4,5,2);
-    // list.add_edge(4,7,100);
-    // list.print();
-    incident_matrix inc = incident_matrix();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_edge(2,3);
-    inc.add_edge(3,2);
-    inc.add_edge(3,2);
-    inc.add_edge(3,5);
-    inc.add_edge(4,3);
-    inc.add_edge(1,3);
-    inc.print();
+
+    adjacency_list list = adjacency_list();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_vertex();
+    list.print();
+    list.add_edge(0,3,1);
+    list.print();
+    list.add_edge(3,4,5);
+    list.print();
+    list.add_edge(7,3,1);
+    list.print();
+    list.add_edge(4,3,2);
+    list.print();
+    list.add_edge(4,5,2);
+    list.print();
+    list.add_edge(4,7,100);
+    list.print();
+
+
+    // incident_matrix inc = incident_matrix();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_edge(2,3);
+    // inc.add_edge(3,2);
+    // inc.add_edge(3,2);
+    // inc.add_edge(3,5);
+    // inc.add_edge(4,3);
+    // inc.add_edge(1,3);
+    // inc.print();
 
     return 0;
 }
