@@ -53,9 +53,18 @@ struct adjacency_matrix{
         delete[] this->matrix;
         this->matrix = temp_matrix;
     };
-    bool add_edge(int src_vertex, int dst_vertex, int weight = 1){
+    bool add_edge_dir(int src_vertex, int dst_vertex, int weight = 1){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
             this->matrix[src_vertex][dst_vertex] = weight;
+            return true;
+        }else{
+            return false;
+        }
+    };
+    bool add_edge_undir(int src_vertex, int dst_vertex, int weight = 1){
+        if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
+            this->matrix[src_vertex][dst_vertex] = weight;
+            this->matrix[dst_vertex][src_vertex] = weight;
             return true;
         }else{
             return false;
@@ -206,7 +215,7 @@ struct incident_matrix{
             delete[] this->matrix;
         this->matrix = temp_matrix;
     };
-    bool add_edge(int src_vertex, int dst_vertex){
+    bool add_edge_dir(int src_vertex, int dst_vertex){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
             for(int i = 0; i < this->number_of_edges-1; i++){
                 int source = 0;
@@ -280,19 +289,20 @@ struct incident_matrix{
     };
 };
 
+bool prim_adjency_matrix(adjacency_matrix matrix, int start_vertex){
+
+}
+
 int main(){
-    // adjacency_matrix matrix = adjacency_matrix();
-    // printf("======\n");
-    // matrix.add_vertex();
-    // matrix.add_vertex();
-    // matrix.add_vertex();
-    // matrix.add_vertex();
-    // matrix.add_vertex();
-    // printf("======\n");
-    // matrix.add_edge(1,2,10);
-    // matrix.add_edge(2,3,5);
-    // matrix.add_edge(3,4,3);
-    // matrix.print();
+    adjacency_matrix matrix = adjacency_matrix(5);
+    printf("======\n");
+    printf("======\n");
+    matrix.add_edge_undir(1,2,10);
+    matrix.add_edge_undir(1,4,1);
+    matrix.add_edge_undir(2,3,5);
+    matrix.add_edge_undir(2,0,5);
+    matrix.add_edge_undir(3,4,3);
+    matrix.print();
 
     // adjacency_list list = adjacency_list();
     // list.print();
@@ -334,20 +344,20 @@ int main(){
     // list.print();
 
 
-    incident_matrix inc = incident_matrix();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_vertex();
-    inc.add_edge_undir(2,3);
-    inc.add_edge_undir(3,2);
-    inc.add_edge_undir(3,2);
-    inc.add_edge_undir(3,5);
-    inc.add_edge_undir(4,3);
-    inc.add_edge_undir(1,3);
-    inc.print();
+    // incident_matrix inc = incident_matrix();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_vertex();
+    // inc.add_edge_undir(2,3);
+    // inc.add_edge_undir(3,2);
+    // inc.add_edge_undir(3,2);
+    // inc.add_edge_undir(3,5);
+    // inc.add_edge_undir(4,3);
+    // inc.add_edge_undir(1,3);
+    // inc.print();
 
     return 0;
 }
