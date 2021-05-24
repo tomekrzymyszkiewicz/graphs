@@ -3,6 +3,23 @@
 #include<queue>
 #include<stdio.h>
 
+struct node{
+        int source;
+        int destination;
+        int weight;
+        node *next;
+        node(int source, int destination, int weight, node* next = nullptr){
+            this->source = source;
+            this->destination = destination;
+            this->weight = weight;
+            this->next = nullptr;
+        };
+        struct compare{
+            bool operator()(const node& a, node& b){
+                return a.weight>b.weight;
+            }
+        };
+    };
 
 struct adjacency_matrix{
     int **matrix;
@@ -72,16 +89,16 @@ struct adjacency_matrix{
 };
 
 struct adjacency_list{
-    struct node{
+    struct list_node{
         int dst;
         int weight;
-        node *next;
-        node(){
+        list_node *next;
+        list_node(){
             dst = 0;
             weight = 0;
             next = nullptr;
         };
-        node(int dst, int weight, node *next = nullptr){
+        list_node(int dst, int weight, list_node *next = nullptr){
             this->dst = dst;
             this->weight = weight;
             this->next = next;
@@ -92,15 +109,15 @@ struct adjacency_list{
             return a.weight>b.weight;
         }
     };
-    node **array_of_lists;
+    list_node **array_of_lists;
     int number_of_vertices;
     adjacency_list(){
         number_of_vertices = 0;
-        array_of_lists = new node*[0];
+        array_of_lists = new list_node*[0];
     };
     adjacency_list(int number_of_vertices){
         this->number_of_vertices = number_of_vertices;
-        array_of_lists = new node*[number_of_vertices];
+        array_of_lists = new list_node*[number_of_vertices];
         for(int i = 0; i < number_of_vertices; i++){
             array_of_lists[i] = nullptr;
         }
@@ -108,7 +125,7 @@ struct adjacency_list{
     void print(){
         for(int i = 0; i < this->number_of_vertices; i++){
             printf("V %3d ->",i);
-            node *current_node = array_of_lists[i];
+            list_node *current_node = array_of_lists[i];
             while(current_node){
                 printf(" {V: %3d|W: %3d},",current_node->dst,current_node->weight);
                 current_node = current_node->next;
@@ -118,7 +135,7 @@ struct adjacency_list{
     };
     void add_vertex(){
         this->number_of_vertices++;
-        node **temp_array_of_lists = new node*[this->number_of_vertices];
+        list_node **temp_array_of_lists = new list_node*[this->number_of_vertices];
         for(int i = 0; i < this->number_of_vertices; i++){
             temp_array_of_lists[i] = this->array_of_lists[i];
         }
@@ -128,15 +145,15 @@ struct adjacency_list{
     };
     bool add_edge_dir(int src_vertex, int dst_vertex, int weight = 1){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
-            node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
+            list_node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
             if(source_node == nullptr){
-                source_node = new node(dst_vertex,weight);
+                source_node = new list_node(dst_vertex,weight);
             }else{
-                node* current_node = this->array_of_lists[src_vertex];
+                list_node* current_node = this->array_of_lists[src_vertex];
                 while(current_node->next != nullptr){
                     current_node = current_node->next;
                 }
-                current_node->next = new node(dst_vertex,weight);
+                current_node->next = new list_node(dst_vertex,weight);
             }
             return true;
         }else{
@@ -145,25 +162,25 @@ struct adjacency_list{
     };
     bool add_edge_undir(int src_vertex, int dst_vertex, int weight = 1){
         if(src_vertex < this->number_of_vertices && dst_vertex < this->number_of_vertices && src_vertex >= 0 && dst_vertex >= 0){
-            node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
+            list_node*& source_node = this->array_of_lists[src_vertex]; //reference to pointer
             if(source_node == nullptr){
-                source_node = new node(dst_vertex,weight);
+                source_node = new list_node(dst_vertex,weight);
             }else{
-                node* current_node = this->array_of_lists[src_vertex];
+                list_node* current_node = this->array_of_lists[src_vertex];
                 while(current_node->next != nullptr){
                     current_node = current_node->next;
                 }
-                current_node->next = new node(dst_vertex,weight);
+                current_node->next = new list_node(dst_vertex,weight);
             }
-            node*& second_direction_source_node = this->array_of_lists[dst_vertex]; //reference to pointer
+            list_node*& second_direction_source_node = this->array_of_lists[dst_vertex]; //reference to pointer
             if(second_direction_source_node == nullptr){
-                second_direction_source_node = new node(src_vertex,weight);
+                second_direction_source_node = new list_node(src_vertex,weight);
             }else{
-                node* current_node = this->array_of_lists[dst_vertex];
+                list_node* current_node = this->array_of_lists[dst_vertex];
                 while(current_node->next != nullptr){
                     current_node = current_node->next;
                 }
-                current_node->next = new node(src_vertex,weight);
+                current_node->next = new list_node(src_vertex,weight);
             }
             return true;
         }else{
