@@ -8,21 +8,6 @@ using namespace std;
 
 
 adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
-    struct node{
-        int source;
-        int destination;
-        int weight;
-        node(int source, int destination, int weight){
-            this->source = source;
-            this->destination = destination;
-            this->weight = weight;
-        };
-        struct compare{
-            bool operator()(const node& a, node& b){
-                return a.weight>b.weight;
-            }
-        };
-    };
     priority_queue<node, vector<node>, node::compare> pq;
     bool *visited = new bool[graph_matrix.number_of_vertices];
     for(int i = 0; i < graph_matrix.number_of_vertices; i++)
@@ -51,21 +36,6 @@ adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
 }
 
 adjacency_list* prim(adjacency_list graph_list, int start_vertex){
-    struct node{
-        int source;
-        int destination;
-        int weight;
-        node(int source, int destination, int weight){
-            this->source = source;
-            this->destination = destination;
-            this->weight = weight;
-        };
-        struct compare{
-            bool operator()(const node& a, node& b){
-                return a.weight>b.weight;
-            }
-        };
-    };
     priority_queue<node, vector<node>, node::compare> pq;
     bool *visited = new bool[graph_list.number_of_vertices];
     for(int i = 0; i < graph_list.number_of_vertices; i++)
@@ -76,7 +46,7 @@ adjacency_list* prim(adjacency_list graph_list, int start_vertex){
     visited[v] = true;
     pq = priority_queue<node, vector<node>, node::compare>();
     for(int i = 0; i < graph_list.number_of_vertices-1; i++){
-        for(adjacency_list::node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next){
+        for(adjacency_list::list_node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next){
             if(!visited[current_node->dst])
                 pq.push(node(v,current_node->dst,current_node->weight));
         }
@@ -92,6 +62,19 @@ adjacency_list* prim(adjacency_list graph_list, int start_vertex){
     }
     return MST;
 }
+
+int** dijkstra(adjacency_list graph_list, int start_vertex){
+    int **paths_array = new int*[2];
+    paths_array[0] = new int[graph_list.number_of_vertices]; //array of distances
+    paths_array[1] = new int[graph_list.number_of_vertices]; //array of predecessors
+    for(int i = 0; i < graph_list.number_of_vertices; i++){
+        paths_array[0][i] = -1;
+        paths_array[1][i] = -1;
+    }
+    priority_queue<node, vector<node>, node::compare> pq = priority_queue<node, vector<node>, node::compare>();
+
+}
+
 
 int main(){
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
