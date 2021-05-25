@@ -86,39 +86,13 @@ int** dijkstra(adjacency_list graph_list, int start_vertex){
                 v = i;
             }
         }
-
-        // pq = priority_queue<node, vector<node>, node::compare>();
         for(adjacency_list::list_node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next){
             if(current_node && paths_array[0][v]+current_node->weight < paths_array[0][current_node->dst]){
                 paths_array[0][current_node->dst] = paths_array[0][v] + current_node->weight;
                 paths_array[1][current_node->dst] = v;
             }
-            // pq.push(node(v,graph_list.array_of_lists[v]->dst,graph_list.array_of_lists[v]->weight));
         }
-        // while(visited[pq.top().destination]){
-        //     if(pq.top().weight < paths_array[0][pq.top().destination]){
-        //         paths_array[0][pq.top().destination] = pq.top().weight;
-        //         paths_array[1][pq.top().destination] = pq.top().source;
-        //         pq.pop();
-        //     }
-        // }
         visited[v] = true;
-        // printf("\n\n\ndistance\n");
-        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
-        //     printf("%3d",i);
-        // }
-        // printf("\n-----------------------------\n");
-        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
-        //     printf("%3d",paths_array[0][i]);
-        // }
-        // printf("\nparrent\n");
-        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
-        //     printf("%3d",paths_array[1][i]);
-        // }
-        // printf("\nvisited\n");
-        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
-        //     printf("%3d",visited[i]);
-        // }
         }
     return paths_array;
 }
