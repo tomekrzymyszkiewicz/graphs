@@ -3,7 +3,7 @@
 #include<queue>
 #include<stdio.h>
 
-struct node{
+struct node{ //used in MST algorithm
         int source;
         int destination;
         int weight;
