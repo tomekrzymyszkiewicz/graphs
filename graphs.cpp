@@ -67,12 +67,60 @@ int** dijkstra(adjacency_list graph_list, int start_vertex){
     int **paths_array = new int*[2];
     paths_array[0] = new int[graph_list.number_of_vertices]; //array of distances
     paths_array[1] = new int[graph_list.number_of_vertices]; //array of predecessors
+    bool *visited = new bool[graph_list.number_of_vertices];
     for(int i = 0; i < graph_list.number_of_vertices; i++){
-        paths_array[0][i] = -1;
+        paths_array[0][i] = INT_MAX;
         paths_array[1][i] = -1;
+        visited[i] = false;
     }
-    priority_queue<node, vector<node>, node::compare> pq = priority_queue<node, vector<node>, node::compare>();
+    paths_array[0][start_vertex] = 0;
+    paths_array[1][start_vertex] = start_vertex;
+    // priority_queue<node, vector<node>, node::compare> pq = priority_queue<node, vector<node>, node::compare>();
+    int v = start_vertex; //current vertex in algorithm
+    for(int i = 0; i < graph_list.number_of_vertices; i++){
+        //find unvisited vertex with shortes path
+        int min = INT_MAX;
+        for(int i = 0; i < graph_list.number_of_vertices; i++){
+            if(paths_array[0][i] < min && !visited[i]){
+                min = paths_array[0][i];
+                v = i;
+            }
+        }
 
+        // pq = priority_queue<node, vector<node>, node::compare>();
+        for(adjacency_list::list_node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next){
+            if(current_node && paths_array[0][v]+current_node->weight < paths_array[0][current_node->dst]){
+                paths_array[0][current_node->dst] = paths_array[0][v] + current_node->weight;
+                paths_array[1][current_node->dst] = v;
+            }
+            // pq.push(node(v,graph_list.array_of_lists[v]->dst,graph_list.array_of_lists[v]->weight));
+        }
+        // while(visited[pq.top().destination]){
+        //     if(pq.top().weight < paths_array[0][pq.top().destination]){
+        //         paths_array[0][pq.top().destination] = pq.top().weight;
+        //         paths_array[1][pq.top().destination] = pq.top().source;
+        //         pq.pop();
+        //     }
+        // }
+        visited[v] = true;
+        // printf("\n\n\ndistance\n");
+        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
+        //     printf("%3d",i);
+        // }
+        // printf("\n-----------------------------\n");
+        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
+        //     printf("%3d",paths_array[0][i]);
+        // }
+        // printf("\nparrent\n");
+        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
+        //     printf("%3d",paths_array[1][i]);
+        // }
+        // printf("\nvisited\n");
+        // for(int i = 0; i < graph_list.number_of_vertices; i ++){
+        //     printf("%3d",visited[i]);
+        // }
+        }
+    return paths_array;
 }
 
 
@@ -102,8 +150,8 @@ int main(){
 
 
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
-    adjacency_list list = adjacency_list(9);
-    list.add_edge_undir(0,8,1);
+    adjacency_list list = adjacency_list(8);
+    // list.add_edge_undir(0,8,1);
     list.add_edge_undir(0,1,5);
     list.add_edge_undir(0,3,9);
     list.add_edge_undir(0,6,3);
@@ -120,10 +168,21 @@ int main(){
     list.add_edge_undir(5,6,6);
     list.add_edge_undir(6,7,9);
     list.print();
-    adjacency_list *mst = prim(list,0);
-    mst->print();
-
-
+    // adjacency_list *mst = prim(list,0);
+    // mst->print();
+    int **dijkstra_arr = dijkstra(list, 0);
+    printf("distance\n");
+    for(int i = 0; i < list.number_of_vertices; i ++){
+        printf("%3d",i);
+    }
+    printf("\n-----------------------------\n");
+    for(int i = 0; i < list.number_of_vertices; i ++){
+        printf("%3d",dijkstra_arr[0][i]);
+    }
+    printf("\nparrent\n");
+    for(int i = 0; i < list.number_of_vertices; i ++){
+        printf("%3d",dijkstra_arr[1][i]);
+    }
     // incident_matrix inc = incident_matrix();
     // inc.add_vertex();
     // inc.add_vertex();
