@@ -123,6 +123,23 @@ int** dijkstra(adjacency_list graph_list, int start_vertex){
     return paths_array;
 }
 
+void print_dijkstra(int **result_array, int number_of_vertices){
+    for(int i = 0; i < (((number_of_vertices*3)-1)/2); i ++)
+        printf("=");
+    printf("SHORTEST PATHS");
+    for(int i = 0; i < (((number_of_vertices*3)-1)/2); i ++)
+        printf("=");
+    printf("\nINDEX       |");
+    for(int i = 0; i < number_of_vertices; i ++)
+        printf("%3d",i);
+    printf("\nDISTANCE    |");
+    for(int i = 0; i < number_of_vertices; i ++)
+        printf("%3d",result_array[0][i]);
+    printf("\nPREDECESSOR |");
+    for(int i = 0; i < number_of_vertices; i ++)
+        printf("%3d",result_array[1][i]);
+}
+
 
 int main(){
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
@@ -170,19 +187,9 @@ int main(){
     list.print();
     // adjacency_list *mst = prim(list,0);
     // mst->print();
-    int **dijkstra_arr = dijkstra(list, 0);
-    printf("distance\n");
-    for(int i = 0; i < list.number_of_vertices; i ++){
-        printf("%3d",i);
-    }
-    printf("\n-----------------------------\n");
-    for(int i = 0; i < list.number_of_vertices; i ++){
-        printf("%3d",dijkstra_arr[0][i]);
-    }
-    printf("\nparrent\n");
-    for(int i = 0; i < list.number_of_vertices; i ++){
-        printf("%3d",dijkstra_arr[1][i]);
-    }
+    // int **dijkstra_arr = dijkstra(list, 0);
+    print_dijkstra(dijkstra(list, 0),list.number_of_vertices);
+   
     // incident_matrix inc = incident_matrix();
     // inc.add_vertex();
     // inc.add_vertex();
