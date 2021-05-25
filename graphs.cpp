@@ -75,7 +75,6 @@ int** dijkstra(adjacency_list graph_list, int start_vertex){
     }
     paths_array[0][start_vertex] = 0;
     paths_array[1][start_vertex] = start_vertex;
-    // priority_queue<node, vector<node>, node::compare> pq = priority_queue<node, vector<node>, node::compare>();
     int v = start_vertex; //current vertex in algorithm
     for(int i = 0; i < graph_list.number_of_vertices; i++){
         //find unvisited vertex with shortes path
@@ -90,6 +89,39 @@ int** dijkstra(adjacency_list graph_list, int start_vertex){
             if(current_node && paths_array[0][v]+current_node->weight < paths_array[0][current_node->dst]){
                 paths_array[0][current_node->dst] = paths_array[0][v] + current_node->weight;
                 paths_array[1][current_node->dst] = v;
+            }
+        }
+        visited[v] = true;
+        }
+    return paths_array;
+}
+
+int** dijkstra(adjacency_matrix graph_matrix, int start_vertex){
+    int **paths_array = new int*[2];
+    paths_array[0] = new int[graph_matrix.number_of_vertices]; //array of distances
+    paths_array[1] = new int[graph_matrix.number_of_vertices]; //array of predecessors
+    bool *visited = new bool[graph_matrix.number_of_vertices];
+    for(int i = 0; i < graph_matrix.number_of_vertices; i++){
+        paths_array[0][i] = INT_MAX;
+        paths_array[1][i] = -1;
+        visited[i] = false;
+    }
+    paths_array[0][start_vertex] = 0;
+    paths_array[1][start_vertex] = start_vertex;
+    int v = start_vertex; //current vertex in algorithm
+    for(int i = 0; i < graph_matrix.number_of_vertices; i++){
+        //find unvisited vertex with shortes path
+        int min = INT_MAX;
+        for(int i = 0; i < graph_matrix.number_of_vertices; i++){
+            if(paths_array[0][i] < min && !visited[i]){
+                min = paths_array[0][i];
+                v = i;
+            }
+        }
+        for(int i = 0; i < graph_matrix.number_of_vertices; i++){ //v - source i - destination value - weight
+            if(graph_matrix.matrix[v][i] != 0 && paths_array[0][v]+graph_matrix.matrix[v][i] < paths_array[0][i]){
+                paths_array[0][i] = paths_array[0][v] + graph_matrix.matrix[v][i];
+                paths_array[1][i] = v;
             }
         }
         visited[v] = true;
@@ -112,32 +144,33 @@ void print_dijkstra(int **result_array, int number_of_vertices){
     printf("\nPREDECESSOR |");
     for(int i = 0; i < number_of_vertices; i ++)
         printf("%3d",result_array[1][i]);
+    printf("\n");
 }
 
 
 int main(){
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
-    // adjacency_matrix matrix = adjacency_matrix(9);
-    // printf("======\n");
+    adjacency_matrix matrix = adjacency_matrix(8);
     // matrix.add_edge_undir(0,8,1);
-    // matrix.add_edge_undir(0,1,5);
-    // matrix.add_edge_undir(0,3,9);
-    // matrix.add_edge_undir(0,6,3);
-    // matrix.add_edge_undir(1,5,6);
-    // matrix.add_edge_undir(1,4,8);
-    // matrix.add_edge_undir(1,7,7);
-    // matrix.add_edge_undir(2,3,9);
-    // matrix.add_edge_undir(2,4,4);
-    // matrix.add_edge_undir(2,6,5);
-    // matrix.add_edge_undir(2,7,3);
-    // matrix.add_edge_undir(3,6,8);
-    // matrix.add_edge_undir(4,5,2);
-    // matrix.add_edge_undir(4,6,1);
-    // matrix.add_edge_undir(5,6,6);
-    // matrix.add_edge_undir(6,7,9);
+    matrix.add_edge_undir(0,1,5);
+    matrix.add_edge_undir(0,3,9);
+    matrix.add_edge_undir(0,6,3);
+    matrix.add_edge_undir(1,5,6);
+    matrix.add_edge_undir(1,4,8);
+    matrix.add_edge_undir(1,7,7);
+    matrix.add_edge_undir(2,3,9);
+    matrix.add_edge_undir(2,4,4);
+    matrix.add_edge_undir(2,6,5);
+    matrix.add_edge_undir(2,7,3);
+    matrix.add_edge_undir(3,6,8);
+    matrix.add_edge_undir(4,5,2);
+    matrix.add_edge_undir(4,6,1);
+    matrix.add_edge_undir(5,6,6);
+    matrix.add_edge_undir(6,7,9);
     // matrix.print();
     // adjacency_matrix *mst_matrix = prim(matrix,0);
     // mst_matrix->print();
+    print_dijkstra(dijkstra(matrix,0),matrix.number_of_vertices);
 
 
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
@@ -158,7 +191,7 @@ int main(){
     list.add_edge_undir(4,6,1);
     list.add_edge_undir(5,6,6);
     list.add_edge_undir(6,7,9);
-    list.print();
+    // list.print();
     // adjacency_list *mst = prim(list,0);
     // mst->print();
     // int **dijkstra_arr = dijkstra(list, 0);
