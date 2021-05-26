@@ -397,4 +397,6 @@ $RECYCLE.BIN/
 
 *.json
 tempCodeRunnerFile.cpp
+tempCodeRunnerFile.py
+*.csv
 # End of https://www.toptal.com/developers/gitignore/api/windows,c++,visualstudiocode,latex,microsoftoffice
