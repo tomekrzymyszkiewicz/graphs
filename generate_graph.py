@@ -10,12 +10,9 @@ def main():
     min_weight  = int(config['graph']['min_weight'])
     max_weight = int(config['graph']['max_weight'])
     array_of_verices = np.arange(number_of_vertices)
-    print(array_of_verices)
     shuffled_array_of_verices = np.arange(number_of_vertices)
     np.random.shuffle(shuffled_array_of_verices)
-    print(shuffled_array_of_verices)
     array_of_weights = np.random.randint(min_weight,max_weight,number_of_edges)
-    print(array_of_weights)
     with open(file_name, mode='w') as file:
         for vertex in range(number_of_edges):
             if vertex >= number_of_vertices:
