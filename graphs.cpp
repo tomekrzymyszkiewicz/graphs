@@ -3,11 +3,15 @@
 #include<fstream>
 #include<stdio.h>
 #include<queue>
+#include<chrono>
 #include<vector>
+#include<random>
 #include<string>
 #include<windows.h>
 #include"structures.h"
 using namespace std;
+using namespace std::chrono;
+
 vector<vector<string>> tasks;
 vector<string> results;
 string data_file_name = "";
@@ -159,6 +163,40 @@ void print_dijkstra(int **result_array, int number_of_vertices){
     printf("\n");
 }
 
+struct Result{
+    string structure;
+    string operation;
+    string graph_type;
+    int size_of_structure;
+    double time_memory;
+    int number_of_repeats;
+    string test_type;
+    Result(string structure, string operation, string graph_type, int size_of_structure, double time_memory, int number_of_repeats, string test_type){
+        this->structure = structure;
+        this->operation = operation;
+        this->graph_type = graph_type;
+        this->size_of_structure = size_of_structure;
+        this->time_memory = time_memory;
+        this->number_of_repeats = number_of_repeats;
+        this->test_type = test_type;
+    }
+    string toString(){
+        return(structure+","+operation+","+to_string(size_of_structure)+","+to_string(time_memory)+","+to_string(number_of_repeats)+","+test_type);
+    }
+};
+
+void save_results(string results_file_name){
+    cout<<"Saving results"<<endl;
+    fstream fout;
+    fout.open(results_file_name,ios::out);
+    fout<<"structure,graph_type,operation,size_of_structure,test_type,number_of_repeats"<<endl;
+    for(int i = 0; i < results.size(); i++){
+        fout<<results[i]<<endl;
+    }
+    fout.close();
+    cout<<"Correctly saved "<<results.size()<<" results"<<endl;
+}
+
 bool load_data(string file_name, int amount){
     cout<<"Loading data from "<<file_name<<" file"<<endl;
     ifstream fin;
@@ -199,18 +237,20 @@ void load_config(){
     fin >> data_file_name >> data_amount;
     fin >> results_file_name;
     while(!fin.eof()){
-        string structure, operation, min_size, max_size, step, number_of_repeats;
-        fin>>structure>>operation>>min_size>>max_size>>step>>number_of_repeats;
-        if(structure.size() == 0 || operation.size() == 0 || min_size.size() == 0 || max_size.size() == 0 || step.size() == 0 || number_of_repeats.size() == 0){
+        string structure, graph_type, operation, min_size, max_size, step, number_of_repeats, test_type;
+        fin>>structure>>graph_type>>operation>>min_size>>max_size>>step>>number_of_repeats>>test_type;
+        if(structure.size() == 0 || graph_type.size() == 0 || operation.size() == 0 || min_size.size() == 0 || max_size.size() == 0 || step.size() == 0 || number_of_repeats.size() == 0 || test_type.size() == 0){
             break;
         }
         vector<string> task;
         task.push_back(structure);
         task.push_back(operation);
+        task.push_back(graph_type);
         task.push_back(min_size);
         task.push_back(max_size);
         task.push_back(step);
         task.push_back(number_of_repeats);
+        task.push_back(test_type);
         tasks.push_back(task);
     }
     fin.close();
@@ -228,11 +268,13 @@ int main(){
     }else{
         for(int i = 0;i < tasks.size(); i++){
             string structure = tasks[i][0];
-            string operation = tasks[i][1];
-            int min_size = stoi(tasks[i][2]);
-            int max_size = stoi(tasks[i][3]);
-            int step = stoi(tasks[i][4]);
-            int number_of_repeats = stoi(tasks[i][5]);
+            string graph_type = tasks[i][1];
+            string operation = tasks[i][2];
+            int min_size = stoi(tasks[i][3]);
+            int max_size = stoi(tasks[i][4]);
+            int step = stoi(tasks[i][5]);
+            int number_of_repeats = stoi(tasks[i][6]);
+            string test_type = tasks[i][7];
             cout<<"Operation "<<operation<<" in "<<structure<<" in range from "<<min_size<<" to "<<max_size<<" with step "<<step<<" repeated "<<number_of_repeats<<" times"<<endl;
             if(min_size<1){
                 cout<<"Cannot execute task. The array must to have at least 1 element.";
@@ -240,25 +282,105 @@ int main(){
                 cout<<"Cannot execute task. The minimum number of repetitions is 1.";
             }else{
                 if(structure == "adjacency_matrix"){
-                    if(operation == "MST"){
-                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                    if(graph_type == "directed"){
+                        if(operation == "MST"){
+                        if(test_type == "time"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                                cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                duration<double> time_span = duration<double>(0);
+                                adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                random_device rd;
+                                mt19937 gen(rd());
+                                uniform_int_distribution<> dis(0, current_size-1);
+                                for(int j = 0; i < current_size; i++){
+                                    current_graph.add_edge_dir(graph_data[i].source,graph_data[i].destination,graph_data[i].weight);
+                                }
+                                t_start = high_resolution_clock::now();
+                                for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                    prim(current_graph,dis(gen));
+                                }
+                                t_end = high_resolution_clock::now();
+                                time_span = duration_cast<duration<double>>(t_end - t_start);
+                                Result adjacency_matrix_dir_MST = Result(structure,graph_type,operation,current_size,time_span.count(),number_of_repeats,test_type);
+                                results.push_back(adjacency_matrix_dir_MST.toString());
+                            }
+                        }else if(test_type == "memory"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
                             
+                            }
+                        }else if(test_type == "print"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else{
+                            cout<<"Cannot recognize "<<test_type<<" type of test.";
                         }
                     }else if(operation == "shortest_paths"){
-                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                        if(test_type == "time"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
                             
+                            }
+                        }else if(test_type == "memory"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else if(test_type == "print"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else{
+                            cout<<"Cannot recognize "<<test_type<<" type of test.";
                         }
                     }else{
                         cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
                     }
+                    }else if(graph_type == "undirected"){
+
+                    }else{
+                        cout<<"Cannot recognize "<<graph_type<<" type of graph.";
+                    }
+                    
                 }else if(structure == "adjacency_list"){
                     if(operation == "MST"){
-                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                        if(test_type == "time"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                                cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                duration<double> time_span = duration<double>(0);
+                                adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                    // current_graph.
+                                }
+                            }
+                        }else if(test_type == "memory"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
                             
+                            }
+                        }else if(test_type == "print"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else{
+                            cout<<"Cannot recognize "<<test_type<<" type of test.";
                         }
                     }else if(operation == "shortest_paths"){
-                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                        if(test_type == "time"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
                             
+                            }
+                        }else if(test_type == "memory"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else if(test_type == "print"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else{
+                            cout<<"Cannot recognize "<<test_type<<" type of test.";
                         }
                     }else{
                         cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
