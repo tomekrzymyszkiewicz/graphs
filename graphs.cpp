@@ -31,7 +31,7 @@ adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
     visited[v] = true;
     pq = priority_queue<node, vector<node>, node::compare>();
     for(int i = 0; i < graph_matrix.number_of_vertices-1; i++){
-        graph_matrix.print();
+        // graph_matrix.print();
         for(int j = 0; j < graph_matrix.number_of_vertices; j++){
             if(graph_matrix.matrix[v][j] != 0 && !visited[j]){
                 pq.push(node(v,j,graph_matrix.matrix[v][j]));
@@ -298,16 +298,16 @@ int main(){
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
-                                    random_device rd;
-                                    mt19937 gen(rd());
-                                    uniform_int_distribution<> dis(0, current_size-1);
+                                    // random_device rd;
+                                    // mt19937 gen(time(nullptr));
+                                    // uniform_int_distribution<> dis(0, current_size-1);
                                     for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
                                         current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
                                     }
                                     t_start = high_resolution_clock::now();
                                     for(int repeat = 0; repeat < number_of_repeats; repeat++){
-                                        int random_start_vertex = dis(gen);
-                                        prim(current_graph,random_start_vertex);
+                                        // int random_start_vertex = dis(gen);
+                                        prim(current_graph,0);
                                     }
                                     t_end = high_resolution_clock::now();
                                     time_span = duration_cast<duration<double>>(t_end - t_start);
@@ -320,7 +320,21 @@ int main(){
                             }
                         }else if(test_type == "print"){
                             for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                            
+                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    adjacency_matrix *mst = new adjacency_matrix();
+                                    // random_device rd;
+                                    // mt19937 gen(time(nullptr));
+                                    // uniform_int_distribution<> dis(0, current_size-1);
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        // int random_start_vertex = dis(gen);
+                                        // cout<<"MST from vertex: "<<random_start_vertex<<endl;
+                                        mst = prim(current_graph,0);
+                                        mst->print();
+                                    }
                             }
                         }else{
                             cout<<"Cannot recognize "<<test_type<<" type of test.";
