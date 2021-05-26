@@ -5,6 +5,7 @@
 #include<queue>
 #include<chrono>
 #include<vector>
+#include<conio.h>
 #include<random>
 #include<string>
 #include<windows.h>
@@ -30,12 +31,15 @@ adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
     visited[v] = true;
     pq = priority_queue<node, vector<node>, node::compare>();
     for(int i = 0; i < graph_matrix.number_of_vertices-1; i++){
+        graph_matrix.print();
         for(int j = 0; j < graph_matrix.number_of_vertices; j++){
             if(graph_matrix.matrix[v][j] != 0 && !visited[j]){
                 pq.push(node(v,j,graph_matrix.matrix[v][j]));
             }
         }
         visited[v] = true;
+        if(pq.empty())
+            return MST;
         while(visited[pq.top().destination]){
             pq.pop();
         }
@@ -240,12 +244,13 @@ void load_config(){
         string structure, graph_type, operation, min_size, max_size, step, number_of_repeats, test_type;
         fin>>structure>>graph_type>>operation>>min_size>>max_size>>step>>number_of_repeats>>test_type;
         if(structure.size() == 0 || graph_type.size() == 0 || operation.size() == 0 || min_size.size() == 0 || max_size.size() == 0 || step.size() == 0 || number_of_repeats.size() == 0 || test_type.size() == 0){
+            cout<<"Cannot load this task: "<<structure<<graph_type<<operation<<min_size<<max_size<<step<<number_of_repeats<<test_type;
             break;
         }
         vector<string> task;
         task.push_back(structure);
-        task.push_back(operation);
         task.push_back(graph_type);
+        task.push_back(operation);
         task.push_back(min_size);
         task.push_back(max_size);
         task.push_back(step);
@@ -284,28 +289,29 @@ int main(){
                 if(structure == "adjacency_matrix"){
                     if(graph_type == "directed"){
                         if(operation == "MST"){
-                        if(test_type == "time"){
-                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                                cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
-                                high_resolution_clock::time_point t_start = high_resolution_clock::now();
-                                high_resolution_clock::time_point t_end = high_resolution_clock::now();
-                                duration<double> time_span = duration<double>(0);
-                                adjacency_matrix current_graph = adjacency_matrix(current_size);
-                                random_device rd;
-                                mt19937 gen(rd());
-                                uniform_int_distribution<> dis(0, current_size-1);
-                                for(int j = 0; i < current_size; i++){
-                                    current_graph.add_edge_dir(graph_data[i].source,graph_data[i].destination,graph_data[i].weight);
+                            if(test_type == "time"){
+                                for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    random_device rd;
+                                    mt19937 gen(rd());
+                                    uniform_int_distribution<> dis(0, current_size-1);
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        int random_start_vertex = dis(gen);
+                                        prim(current_graph,random_start_vertex);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_matrix_dir_MST = Result(structure,graph_type,operation,current_size,time_span.count(),number_of_repeats,test_type);
+                                    results.push_back(adjacency_matrix_dir_MST.toString());
                                 }
-                                t_start = high_resolution_clock::now();
-                                for(int repeat = 0; repeat < number_of_repeats; repeat++){
-                                    prim(current_graph,dis(gen));
-                                }
-                                t_end = high_resolution_clock::now();
-                                time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_matrix_dir_MST = Result(structure,graph_type,operation,current_size,time_span.count(),number_of_repeats,test_type);
-                                results.push_back(adjacency_matrix_dir_MST.toString());
-                            }
                         }else if(test_type == "memory"){
                             for(int current_size = min_size; current_size <= max_size; current_size+=step){
                             
@@ -393,98 +399,100 @@ int main(){
     }
 
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0138.php
-    adjacency_matrix matrix1 = adjacency_matrix(6);
-    matrix1.add_edge_dir(0,1,3);
-    matrix1.add_edge_dir(0,4,3);
-    matrix1.add_edge_dir(1,2,1);
-    matrix1.add_edge_dir(2,3,3);
-    matrix1.add_edge_dir(2,5,1);
-    matrix1.add_edge_dir(3,1,3);
-    matrix1.add_edge_dir(4,5,2);
-    matrix1.add_edge_dir(5,0,6);
-    matrix1.add_edge_dir(5,3,1);
+    // adjacency_matrix matrix1 = adjacency_matrix(6);
+    // matrix1.add_edge_dir(0,1,3);
+    // matrix1.add_edge_dir(0,4,3);
+    // matrix1.add_edge_dir(1,2,1);
+    // matrix1.add_edge_dir(2,3,3);
+    // matrix1.add_edge_dir(2,5,1);
+    // matrix1.add_edge_dir(3,1,3);
+    // matrix1.add_edge_dir(4,5,2);
+    // matrix1.add_edge_dir(5,0,6);
+    // matrix1.add_edge_dir(5,3,1);
     // print_dijkstra(dijkstra(matrix1,0),matrix1.number_of_vertices);
 
     //example graph https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
-    adjacency_matrix matrix2 = adjacency_matrix(9);
-    matrix2.add_edge_undir(0,1,4);
-    matrix2.add_edge_undir(0,7,8);
-    matrix2.add_edge_undir(1,7,11);
-    matrix2.add_edge_undir(1,2,8);
-    matrix2.add_edge_undir(2,8,2);
-    matrix2.add_edge_undir(2,5,4);
-    matrix2.add_edge_undir(2,3,7);
-    matrix2.add_edge_undir(3,5,14);
-    matrix2.add_edge_undir(3,4,9);
-    matrix2.add_edge_undir(4,5,10);
-    matrix2.add_edge_undir(5,6,2);
-    matrix2.add_edge_undir(6,7,1);
-    matrix2.add_edge_undir(6,8,6);
-    matrix2.add_edge_undir(7,8,7);
+    // adjacency_matrix matrix2 = adjacency_matrix(9);
+    // matrix2.add_edge_undir(0,1,4);
+    // matrix2.add_edge_undir(0,7,8);
+    // matrix2.add_edge_undir(1,7,11);
+    // matrix2.add_edge_undir(1,2,8);
+    // matrix2.add_edge_undir(2,8,2);
+    // matrix2.add_edge_undir(2,5,4);
+    // matrix2.add_edge_undir(2,3,7);
+    // matrix2.add_edge_undir(3,5,14);
+    // matrix2.add_edge_undir(3,4,9);
+    // matrix2.add_edge_undir(4,5,10);
+    // matrix2.add_edge_undir(5,6,2);
+    // matrix2.add_edge_undir(6,7,1);
+    // matrix2.add_edge_undir(6,8,6);
+    // matrix2.add_edge_undir(7,8,7);
     // print_dijkstra(dijkstra(matrix2,0),matrix2.number_of_vertices);
 
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
-    adjacency_matrix matrix = adjacency_matrix(10);
-    // matrix.add_edge_undir(0,8,1);
-    matrix.add_edge_undir(0,1,5);
-    matrix.add_edge_undir(0,3,9);
-    matrix.add_edge_undir(0,6,3);
-    matrix.add_edge_undir(1,5,6);
-    matrix.add_edge_undir(1,4,8);
-    matrix.add_edge_undir(1,7,7);
-    matrix.add_edge_undir(2,3,9);
-    matrix.add_edge_undir(2,4,4);
-    matrix.add_edge_undir(2,6,5);
-    matrix.add_edge_undir(2,7,3);
-    matrix.add_edge_undir(3,6,8);
-    matrix.add_edge_undir(4,5,2);
-    matrix.add_edge_undir(4,6,1);
-    matrix.add_edge_undir(5,6,6);
-    matrix.add_edge_undir(6,7,9);
+    // adjacency_matrix matrix = adjacency_matrix(10);
+    // // matrix.add_edge_undir(0,8,1);
+    // matrix.add_edge_undir(0,1,5);
+    // matrix.add_edge_undir(0,3,9);
+    // matrix.add_edge_undir(0,6,3);
+    // matrix.add_edge_undir(1,5,6);
+    // matrix.add_edge_undir(1,4,8);
+    // matrix.add_edge_undir(1,7,7);
+    // matrix.add_edge_undir(2,3,9);
+    // matrix.add_edge_undir(2,4,4);
+    // matrix.add_edge_undir(2,6,5);
+    // matrix.add_edge_undir(2,7,3);
+    // matrix.add_edge_undir(3,6,8);
+    // matrix.add_edge_undir(4,5,2);
+    // matrix.add_edge_undir(4,6,1);
+    // matrix.add_edge_undir(5,6,6);
+    // matrix.add_edge_undir(6,7,9);
     // matrix.print();
     // adjacency_matrix *mst_matrix = prim(matrix,0);
     // mst_matrix->print();
-    print_dijkstra(dijkstra(matrix,0),matrix.number_of_vertices);
+    // print_dijkstra(dijkstra(matrix,0),matrix.number_of_vertices);
 
 
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
-    adjacency_list list = adjacency_list(8);
-    // list.add_edge_undir(0,8,1);
-    list.add_edge_undir(0,1,5);
-    list.add_edge_undir(0,3,9);
-    list.add_edge_undir(0,6,3);
-    list.add_edge_undir(1,5,6);
-    list.add_edge_undir(1,4,8);
-    list.add_edge_undir(1,7,7);
-    list.add_edge_undir(2,3,9);
-    list.add_edge_undir(2,4,4);
-    list.add_edge_undir(2,6,5);
-    list.add_edge_undir(2,7,3);
-    list.add_edge_undir(3,6,8);
-    list.add_edge_undir(4,5,2);
-    list.add_edge_undir(4,6,1);
-    list.add_edge_undir(5,6,6);
-    list.add_edge_undir(6,7,9);
-    // list.print();
-    // adjacency_list *mst = prim(list,0);
-    // mst->print();
-    // int **dijkstra_arr = dijkstra(list, 0);
-    print_dijkstra(dijkstra(list, 0),list.number_of_vertices);
+    // adjacency_list list = adjacency_list(8);
+    // // list.add_edge_undir(0,8,1);
+    // list.add_edge_undir(0,1,5);
+    // list.add_edge_undir(0,3,9);
+    // list.add_edge_undir(0,6,3);
+    // list.add_edge_undir(1,5,6);
+    // list.add_edge_undir(1,4,8);
+    // list.add_edge_undir(1,7,7);
+    // list.add_edge_undir(2,3,9);
+    // list.add_edge_undir(2,4,4);
+    // list.add_edge_undir(2,6,5);
+    // list.add_edge_undir(2,7,3);
+    // list.add_edge_undir(3,6,8);
+    // list.add_edge_undir(4,5,2);
+    // list.add_edge_undir(4,6,1);
+    // list.add_edge_undir(5,6,6);
+    // list.add_edge_undir(6,7,9);
+    // // list.print();
+    // // adjacency_list *mst = prim(list,0);
+    // // mst->print();
+    // // int **dijkstra_arr = dijkstra(list, 0);
+    // print_dijkstra(dijkstra(list, 0),list.number_of_vertices);
    
-    // incident_matrix inc = incident_matrix();
-    // inc.add_vertex();
-    // inc.add_vertex();
-    // inc.add_vertex();
-    // inc.add_vertex();
-    // inc.add_vertex();
-    // inc.add_vertex();
-    // inc.add_edge_undir(2,3);
-    // inc.add_edge_undir(3,2);
-    // inc.add_edge_undir(3,2);
-    // inc.add_edge_undir(3,5);
-    // inc.add_edge_undir(4,3);
-    // inc.add_edge_undir(1,3);
+    // // incident_matrix inc = incident_matrix();
+    // // inc.add_vertex();
+    // // inc.add_vertex();
+    // // inc.add_vertex();
+    // // inc.add_vertex();
+    // // inc.add_vertex();
+    // // inc.add_vertex();
+    // // inc.add_edge_undir(2,3);
+    // // inc.add_edge_undir(3,2);
+    // // inc.add_edge_undir(3,2);
+    // // inc.add_edge_undir(3,5);
+    // // inc.add_edge_undir(4,3);
+    // // inc.add_edge_undir(1,3);
     // inc.print();
-
+    save_results(results_file_name);
+    cout<<"Press any key to continue...";
+    getch();
     return 0;
 }
