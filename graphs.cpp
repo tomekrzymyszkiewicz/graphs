@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include<queue>
 #include<vector>
+#include<string>
 #include<windows.h>
 #include"structures.h"
 using namespace std;
@@ -12,6 +13,7 @@ vector<string> results;
 string data_file_name = "";
 string results_file_name = "";
 vector<node> graph_data = vector<node>();
+int data_amount = 0;
 
 adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
     priority_queue<node, vector<node>, node::compare> pq;
@@ -157,8 +159,30 @@ void print_dijkstra(int **result_array, int number_of_vertices){
     printf("\n");
 }
 
-vector<node> load_data(){
-
+bool load_data(string file_name, int amount){
+    cout<<"Loading data from "<<file_name<<" file"<<endl;
+    ifstream fin;
+    fin.open(file_name,ios::in);
+    if(!fin.good()){
+        cout<<"Data file "<<file_name<<" not exist"<<endl;
+        fin.close();
+        return false;
+    }
+    string loaded_source, loaded_destination, loaded_weight;
+    int data_loaded = 0;
+    for(int i = 0; i < amount; i++){
+        fin>>loaded_source>>loaded_destination>>loaded_weight;
+        if(!fin.eof()){
+            graph_data.push_back(node(stoi(loaded_source),stoi(loaded_destination),stoi(loaded_weight)));
+        }else{
+            cout<<"Not enough elements in data file "<<file_name<<endl;
+            return false;
+        } 
+        data_loaded++;
+    }
+    cout<<"Loaded correctly "<<data_loaded<<" numbers"<<endl;
+    fin.close();
+    return true;
 }
 
 void load_config(){
@@ -172,7 +196,7 @@ void load_config(){
     }
     vector<string> row;
     string line;
-    fin >> data_file_name;
+    fin >> data_file_name >> data_amount;
     fin >> results_file_name;
     while(!fin.eof()){
         string structure, operation, min_size, max_size, step, number_of_repeats;
@@ -195,6 +219,57 @@ void load_config(){
 }
 
 int main(){
+    load_config();
+    if(!load_data(data_file_name,data_amount)){
+        cout<<"Cannot load "<<data_amount<<" numbers from "<<data_file_name<<" file."<<endl;
+    }
+    if(tasks.size() == 0){
+        cout<<"No tasks found to be performed."<<endl;
+    }else{
+        for(int i = 0;i < tasks.size(); i++){
+            string structure = tasks[i][0];
+            string operation = tasks[i][1];
+            int min_size = stoi(tasks[i][2]);
+            int max_size = stoi(tasks[i][3]);
+            int step = stoi(tasks[i][4]);
+            int number_of_repeats = stoi(tasks[i][5]);
+            cout<<"Operation "<<operation<<" in "<<structure<<" in range from "<<min_size<<" to "<<max_size<<" with step "<<step<<" repeated "<<number_of_repeats<<" times"<<endl;
+            if(min_size<1){
+                cout<<"Cannot execute task. The array must to have at least 1 element.";
+            }else if(number_of_repeats<1){
+                cout<<"Cannot execute task. The minimum number of repetitions is 1.";
+            }else{
+                if(structure == "adjacency_matrix"){
+                    if(operation == "MST"){
+                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                        }
+                    }else if(operation == "shortest_paths"){
+                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                        }
+                    }else{
+                        cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
+                    }
+                }else if(structure == "adjacency_list"){
+                    if(operation == "MST"){
+                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                        }
+                    }else if(operation == "shortest_paths"){
+                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                        }
+                    }else{
+                        cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
+                    }
+                }else{
+                    cout<<"Cannot recognize "<<structure<<" structure.";
+                }
+            }
+        }
+    }
+
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0138.php
     adjacency_matrix matrix1 = adjacency_matrix(6);
     matrix1.add_edge_dir(0,1,3);
