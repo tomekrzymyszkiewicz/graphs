@@ -38,14 +38,14 @@ adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
             }
         }
         visited[v] = true;
-        if(pq.empty())
-            return MST;
-        while(visited[pq.top().destination]){
+        while(visited[pq.top().destination] && !pq.empty()){
             pq.pop();
         }
         MST->add_edge_undir(pq.top().source,pq.top().destination,pq.top().weight);
         MST_weight += pq.top().weight;
         v = pq.top().destination;
+        if(pq.empty())
+            return MST;
         pq.pop();
     }
     return MST;
@@ -67,14 +67,14 @@ adjacency_list* prim(adjacency_list graph_list, int start_vertex){
                 pq.push(node(v,current_node->dst,current_node->weight));
         }
         visited[v] = true;
-        if(pq.empty())
-            return MST;
-        while(visited[pq.top().destination]){
+        while(visited[pq.top().destination] && !pq.empty()){
             pq.pop();
         }
         MST->add_edge_undir(pq.top().source,pq.top().destination,pq.top().weight);
         MST_weight += pq.top().weight;
         v = pq.top().destination;
+        if(pq.empty())
+            return MST;
         pq.pop();
 
     }
