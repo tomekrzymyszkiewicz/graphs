@@ -1,11 +1,17 @@
 #include<iostream>
 #include<string.h>
+#include<fstream>
 #include<stdio.h>
 #include<queue>
 #include<vector>
+#include<windows.h>
 #include"structures.h"
 using namespace std;
-
+vector<vector<string>> tasks;
+vector<string> results;
+string data_file_name = "";
+string results_file_name = "";
+vector<node> graph_data = vector<node>();
 
 adjacency_matrix* prim(adjacency_matrix graph_matrix, int start_vertex){
     priority_queue<node, vector<node>, node::compare> pq;
@@ -86,7 +92,7 @@ int** dijkstra(adjacency_list graph_list, int start_vertex){
             }
         }
         for(adjacency_list::list_node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next){
-            if(current_node && paths_array[0][v]+current_node->weight < paths_array[0][current_node->dst]){
+            if(current_node && paths_array[0][v]+current_node->weight < paths_array[0][current_node->dst] && !visited[v]){
                 paths_array[0][current_node->dst] = paths_array[0][v] + current_node->weight;
                 paths_array[1][current_node->dst] = v;
             }
@@ -119,7 +125,7 @@ int** dijkstra(adjacency_matrix graph_matrix, int start_vertex){
             }
         }
         for(int i = 0; i < graph_matrix.number_of_vertices; i++){ //v - source i - destination value - weight
-            if(graph_matrix.matrix[v][i] != 0 && paths_array[0][v]+graph_matrix.matrix[v][i] < paths_array[0][i]){
+            if(graph_matrix.matrix[v][i] != 0 && paths_array[0][v]+graph_matrix.matrix[v][i] < paths_array[0][i] && !visited[v]){
                 paths_array[0][i] = paths_array[0][v] + graph_matrix.matrix[v][i];
                 paths_array[1][i] = v;
             }
@@ -139,18 +145,89 @@ void print_dijkstra(int **result_array, int number_of_vertices){
     for(int i = 0; i < number_of_vertices; i ++)
         printf("%3d",i);
     printf("\nDISTANCE    |");
-    for(int i = 0; i < number_of_vertices; i ++)
-        printf("%3d",result_array[0][i]);
+    for(int i = 0; i < number_of_vertices; i ++){
+        if(result_array[0][i] == INT_MAX)
+           printf(" in");
+        else
+            printf("%3d",result_array[0][i]);
+    }
     printf("\nPREDECESSOR |");
     for(int i = 0; i < number_of_vertices; i ++)
         printf("%3d",result_array[1][i]);
     printf("\n");
 }
 
+vector<node> load_data(){
+
+}
+
+void load_config(){
+    cout<<"Loading config.ini"<<endl;
+    ifstream fin;
+    fin.open("config.ini",ios::in);
+    if(!fin.good()){
+        cout<<"Config.ini not found"<<endl;
+        fin.close();
+        return;
+    }
+    vector<string> row;
+    string line;
+    fin >> data_file_name;
+    fin >> results_file_name;
+    while(!fin.eof()){
+        string structure, operation, min_size, max_size, step, number_of_repeats;
+        fin>>structure>>operation>>min_size>>max_size>>step>>number_of_repeats;
+        if(structure.size() == 0 || operation.size() == 0 || min_size.size() == 0 || max_size.size() == 0 || step.size() == 0 || number_of_repeats.size() == 0){
+            break;
+        }
+        vector<string> task;
+        task.push_back(structure);
+        task.push_back(operation);
+        task.push_back(min_size);
+        task.push_back(max_size);
+        task.push_back(step);
+        task.push_back(number_of_repeats);
+        tasks.push_back(task);
+    }
+    fin.close();
+    cout<<"Config loaded correctly"<<endl;
+    return;
+}
 
 int main(){
+    //example graph https://eduinf.waw.pl/inf/alg/001_search/0138.php
+    adjacency_matrix matrix1 = adjacency_matrix(6);
+    matrix1.add_edge_dir(0,1,3);
+    matrix1.add_edge_dir(0,4,3);
+    matrix1.add_edge_dir(1,2,1);
+    matrix1.add_edge_dir(2,3,3);
+    matrix1.add_edge_dir(2,5,1);
+    matrix1.add_edge_dir(3,1,3);
+    matrix1.add_edge_dir(4,5,2);
+    matrix1.add_edge_dir(5,0,6);
+    matrix1.add_edge_dir(5,3,1);
+    // print_dijkstra(dijkstra(matrix1,0),matrix1.number_of_vertices);
+
+    //example graph https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
+    adjacency_matrix matrix2 = adjacency_matrix(9);
+    matrix2.add_edge_undir(0,1,4);
+    matrix2.add_edge_undir(0,7,8);
+    matrix2.add_edge_undir(1,7,11);
+    matrix2.add_edge_undir(1,2,8);
+    matrix2.add_edge_undir(2,8,2);
+    matrix2.add_edge_undir(2,5,4);
+    matrix2.add_edge_undir(2,3,7);
+    matrix2.add_edge_undir(3,5,14);
+    matrix2.add_edge_undir(3,4,9);
+    matrix2.add_edge_undir(4,5,10);
+    matrix2.add_edge_undir(5,6,2);
+    matrix2.add_edge_undir(6,7,1);
+    matrix2.add_edge_undir(6,8,6);
+    matrix2.add_edge_undir(7,8,7);
+    // print_dijkstra(dijkstra(matrix2,0),matrix2.number_of_vertices);
+
     //example graph https://eduinf.waw.pl/inf/alg/001_search/0141.php#A2
-    adjacency_matrix matrix = adjacency_matrix(8);
+    adjacency_matrix matrix = adjacency_matrix(10);
     // matrix.add_edge_undir(0,8,1);
     matrix.add_edge_undir(0,1,5);
     matrix.add_edge_undir(0,3,9);
