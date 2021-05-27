@@ -214,7 +214,7 @@ struct Result
     }
     string toString()
     {
-        return (structure + ","+ graph_type+"," + operation + "," + to_string(size_of_structure) + "," + to_string(time_memory) + "," + to_string(number_of_repeats) + "," + test_type);
+        return (structure + "," + graph_type + "," + operation + "," + to_string(size_of_structure) + "," + to_string(time_memory) + "," + to_string(number_of_repeats) + "," + test_type);
     }
 };
 
@@ -259,7 +259,7 @@ bool load_data(string file_name, int amount)
         }
         data_loaded++;
     }
-    cout << "Loaded correctly " << data_loaded << " numbers" << endl;
+    cout << "Loaded correctly " << data_loaded << " edges" << endl;
     fin.close();
     return true;
 }
@@ -277,18 +277,20 @@ void load_config()
     }
     vector<string> row;
     string line;
-    fin >> data_file_name >> data_amount;
+    // fin >> data_file_name >> data_amount;
     fin >> results_file_name;
     while (!fin.eof())
     {
-        string structure, graph_type, operation, min_size, max_size, step, number_of_repeats, test_type;
-        fin >> structure >> graph_type >> operation >> min_size >> max_size >> step >> number_of_repeats >> test_type;
-        if (structure.size() == 0 || graph_type.size() == 0 || operation.size() == 0 || min_size.size() == 0 || max_size.size() == 0 || step.size() == 0 || number_of_repeats.size() == 0 || test_type.size() == 0)
+        string file_name, edges, structure, graph_type, operation, min_size, max_size, step, number_of_repeats, test_type;
+        fin >> file_name >> edges >> structure >> graph_type >> operation >> min_size >> max_size >> step >> number_of_repeats >> test_type;
+        if (file_name.size() == 0 || edges.size() == 0 || structure.size() == 0 || graph_type.size() == 0 || operation.size() == 0 || min_size.size() == 0 || max_size.size() == 0 || step.size() == 0 || number_of_repeats.size() == 0 || test_type.size() == 0)
         {
             cout << "Cannot load this task: " << structure << graph_type << operation << min_size << max_size << step << number_of_repeats << test_type;
             break;
         }
         vector<string> task;
+        task.push_back(file_name);
+        task.push_back(edges);
         task.push_back(structure);
         task.push_back(graph_type);
         task.push_back(operation);
@@ -307,10 +309,10 @@ void load_config()
 int main()
 {
     load_config();
-    if (!load_data(data_file_name, data_amount))
-    {
-        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
-    }
+    // if (!load_data(data_file_name, data_amount))
+    // {
+    //     cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+    // }
     if (tasks.size() == 0)
     {
         cout << "No tasks found to be performed." << endl;
@@ -319,14 +321,17 @@ int main()
     {
         for (int i = 0; i < tasks.size(); i++)
         {
-            string structure = tasks[i][0];
-            string graph_type = tasks[i][1];
-            string operation = tasks[i][2];
-            int min_size = stoi(tasks[i][3]);
-            int max_size = stoi(tasks[i][4]);
-            int step = stoi(tasks[i][5]);
-            int number_of_repeats = stoi(tasks[i][6]);
-            string test_type = tasks[i][7];
+            cout<<endl;
+            string graph_file_name = tasks[i][0];
+            int graph_file_edges = stoi(tasks[i][1]);
+            string structure = tasks[i][2];
+            string graph_type = tasks[i][3];
+            string operation = tasks[i][4];
+            int min_size = stoi(tasks[i][5]);
+            int max_size = stoi(tasks[i][6]);
+            int step = stoi(tasks[i][7]);
+            int number_of_repeats = stoi(tasks[i][8]);
+            string test_type = tasks[i][9];
             cout << "Computing " << operation << " in " << structure << " in range from " << min_size << " to " << max_size << " with step " << step << " repeated " << number_of_repeats << " times" << endl;
             if (min_size < 1)
             {
@@ -353,6 +358,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -381,6 +390,10 @@ int main()
                                     cout << "Computing MST on " << graph_type << " graph (adjacency matrix) with " << current_size << " elements" << endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
                                     adjacency_matrix *mst = new adjacency_matrix();
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -408,6 +421,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -435,6 +452,10 @@ int main()
                                 {
                                     cout << "Computing shortest paths on " << graph_type << " graph (adjacency matrix) with " << current_size << " elements" << endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -468,6 +489,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -496,6 +521,10 @@ int main()
                                     cout << "Computing MST on " << graph_type << " graph (adjacency matrix) with " << current_size << " elements" << endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
                                     adjacency_matrix *mst = new adjacency_matrix();
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -523,6 +552,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -550,6 +583,10 @@ int main()
                                 {
                                     cout << "Computing shortest paths on " << graph_type << " graph (adjacency matrix) with " << current_size << " elements. Time test" << endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -590,6 +627,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_list current_graph = adjacency_list(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -618,6 +659,10 @@ int main()
                                     cout << "Computing MST on " << graph_type << " graph (adjacency list) with " << current_size << " elements" << endl;
                                     adjacency_list current_graph = adjacency_list(current_size);
                                     adjacency_list *mst = new adjacency_list();
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -645,6 +690,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_list current_graph = adjacency_list(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -672,6 +721,10 @@ int main()
                                 {
                                     cout << "Computing shortest paths on " << graph_type << " graph (adjacency list) with " << current_size << " elements" << endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -705,6 +758,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_list current_graph = adjacency_list(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -733,6 +790,10 @@ int main()
                                     cout << "Computing MST on " << graph_type << " graph (adjacency list) with " << current_size << " elements" << endl;
                                     adjacency_list current_graph = adjacency_list(current_size);
                                     adjacency_list *mst = new adjacency_list();
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -760,6 +821,10 @@ int main()
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_list current_graph = adjacency_list(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -787,6 +852,10 @@ int main()
                                 {
                                     cout << "Computing shortest paths on " << graph_type << " graph (adjacency list) with " << current_size << " elements. Time test" << endl;
                                     adjacency_list current_graph = adjacency_list(current_size);
+                                    if (!load_data(graph_file_name, graph_file_edges))
+                                    {
+                                        cout << "Cannot load " << data_amount << " numbers from " << data_file_name << " file." << endl;
+                                    }
                                     for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
                                     {
                                         current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
