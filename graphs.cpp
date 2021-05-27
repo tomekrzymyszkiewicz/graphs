@@ -214,7 +214,7 @@ struct Result
     }
     string toString()
     {
-        return (structure + "," + operation + "," + to_string(size_of_structure) + "," + to_string(time_memory) + "," + to_string(number_of_repeats) + "," + test_type);
+        return (structure + ","+ graph_type+"," + operation + "," + to_string(size_of_structure) + "," + to_string(time_memory) + "," + to_string(number_of_repeats) + "," + test_type);
     }
 };
 
@@ -327,7 +327,7 @@ int main()
             int step = stoi(tasks[i][5]);
             int number_of_repeats = stoi(tasks[i][6]);
             string test_type = tasks[i][7];
-            cout << "Operation " << operation << " in " << structure << " in range from " << min_size << " to " << max_size << " with step " << step << " repeated " << number_of_repeats << " times" << endl;
+            cout << "Computing " << operation << " in " << structure << " in range from " << min_size << " to " << max_size << " with step " << step << " repeated " << number_of_repeats << " times" << endl;
             if (min_size < 1)
             {
                 cout << "Cannot execute task. The array must to have at least 1 element.";
