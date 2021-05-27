@@ -577,68 +577,239 @@ int main()
                 }
                 else if (structure == "adjacency_list")
                 {
-                    if (operation == "MST")
+                    if (graph_type == "directed")
                     {
-                        if (test_type == "time")
+                        if (operation == "MST")
                         {
-                            for (int current_size = min_size; current_size <= max_size; current_size += step)
+                            if (test_type == "time")
                             {
-                                cout << "Computing MST on adjacency matrix with " << current_size << " elements. Time test" << endl;
-                                high_resolution_clock::time_point t_start = high_resolution_clock::now();
-                                high_resolution_clock::time_point t_end = high_resolution_clock::now();
-                                duration<double> time_span = duration<double>(0);
-                                adjacency_matrix current_graph = adjacency_matrix(current_size);
-                                for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
                                 {
-                                    // current_graph.
+                                    cout << "Computing MST on " << graph_type << " graph (adjacency list) with " << current_size << " elements. Time test" << endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        prim(current_graph, 0);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_list_dir_MST = Result(structure, graph_type, operation, current_size, time_span.count(), number_of_repeats, test_type);
+                                    results.push_back(adjacency_list_dir_MST.toString());
                                 }
                             }
-                        }
-                        else if (test_type == "memory")
-                        {
-                            for (int current_size = min_size; current_size <= max_size; current_size += step)
+                            else if (test_type == "memory")
                             {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                }
+                            }
+                            else if (test_type == "print")
+                            {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing MST on " << graph_type << " graph (adjacency list) with " << current_size << " elements" << endl;
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    adjacency_list *mst = new adjacency_list();
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        mst = prim(current_graph, 0);
+                                        mst->print();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                cout << "Cannot recognize " << test_type << " type of test.";
                             }
                         }
-                        else if (test_type == "print")
+                        else if (operation == "shortest_paths")
                         {
-                            for (int current_size = min_size; current_size <= max_size; current_size += step)
+                            if (test_type == "time")
                             {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing shortest paths on " << graph_type << " graph (adjacency list) with " << current_size << " elements. Time test" << endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        dijkstra(current_graph, 0);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_list_dir_shortest_paths = Result(structure, graph_type, operation, current_size, time_span.count(), number_of_repeats, test_type);
+                                    results.push_back(adjacency_list_dir_shortest_paths.toString());
+                                }
+                            }
+                            else if (test_type == "memory")
+                            {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                }
+                            }
+                            else if (test_type == "print")
+                            {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing shortest paths on " << graph_type << " graph (adjacency list) with " << current_size << " elements" << endl;
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        print_dijkstra(dijkstra(current_graph, 0), current_size);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                cout << "Cannot recognize " << test_type << " type of test.";
                             }
                         }
                         else
                         {
-                            cout << "Cannot recognize " << test_type << " type of test.";
+                            cout << "Cannot recognize operation " << operation << " in " << structure << " structure.";
                         }
                     }
-                    else if (operation == "shortest_paths")
+                    else if (graph_type == "undirected")
                     {
-                        if (test_type == "time")
+                        if (operation == "MST")
                         {
-                            for (int current_size = min_size; current_size <= max_size; current_size += step)
+                            if (test_type == "time")
                             {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing MST on " << graph_type << " graph (adjacency list) with " << current_size << " elements. Time test" << endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        prim(current_graph, 0);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_list_undir_MST = Result(structure, graph_type, operation, current_size, time_span.count(), number_of_repeats, test_type);
+                                    results.push_back(adjacency_list_undir_MST.toString());
+                                }
+                            }
+                            else if (test_type == "memory")
+                            {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                }
+                            }
+                            else if (test_type == "print")
+                            {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing MST on " << graph_type << " graph (adjacency list) with " << current_size << " elements" << endl;
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    adjacency_list *mst = new adjacency_list();
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        mst = prim(current_graph, 0);
+                                        mst->print();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                cout << "Cannot recognize " << test_type << " type of test.";
                             }
                         }
-                        else if (test_type == "memory")
+                        else if (operation == "shortest_paths")
                         {
-                            for (int current_size = min_size; current_size <= max_size; current_size += step)
+                            if (test_type == "time")
                             {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing shortest paths on " << graph_type << " graph (adjacency list) with " << current_size << " elements. Time test" << endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        dijkstra(current_graph, 0);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_list_undir_shortest_paths = Result(structure, graph_type, operation, current_size, time_span.count(), number_of_repeats, test_type);
+                                    results.push_back(adjacency_list_undir_shortest_paths.toString());
+                                }
                             }
-                        }
-                        else if (test_type == "print")
-                        {
-                            for (int current_size = min_size; current_size <= max_size; current_size += step)
+                            else if (test_type == "memory")
                             {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                }
+                            }
+                            else if (test_type == "print")
+                            {
+                                for (int current_size = min_size; current_size <= max_size; current_size += step)
+                                {
+                                    cout << "Computing shortest paths on " << graph_type << " graph (adjacency list) with " << current_size << " elements. Time test" << endl;
+                                    adjacency_list current_graph = adjacency_list(current_size);
+                                    for (int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++)
+                                    {
+                                        current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
+                                    }
+                                    for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                    {
+                                        print_dijkstra(dijkstra(current_graph, 0), current_size);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                cout << "Cannot recognize " << test_type << " type of test.";
                             }
                         }
                         else
                         {
-                            cout << "Cannot recognize " << test_type << " type of test.";
+                            cout << "Cannot recognize operation " << operation << " in " << structure << " structure.";
                         }
                     }
                     else
                     {
-                        cout << "Cannot recognize operation " << operation << " in " << structure << " structure.";
+                        cout << "Cannot recognize " << graph_type << " type of graph.";
                     }
                 }
                 else
