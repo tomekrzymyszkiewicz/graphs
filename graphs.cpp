@@ -293,7 +293,7 @@ int main(){
                         if(operation == "MST"){
                             if(test_type == "time"){
                                 for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    cout<<"Computing MST on "<<graph_type<<" graph (adjacency matrix) with "<<current_size<<" elements. Time test"<<endl;
                                     high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
@@ -333,6 +333,22 @@ int main(){
                     }else if(operation == "shortest_paths"){
                         if(test_type == "time"){
                             for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                                cout<<"Computing shortest paths on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        dijkstra(current_graph,0);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_matrix_dir_shortest_paths = Result(structure,graph_type,operation,current_size,time_span.count(),number_of_repeats,test_type);
+                                    results.push_back(adjacency_matrix_dir_shortest_paths.toString());
                             
                             }
                         }else if(test_type == "memory"){
@@ -341,7 +357,14 @@ int main(){
                             }
                         }else if(test_type == "print"){
                             for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                            
+                                    cout<<"Computing shortest paths on "<<graph_type<<" graph (adjacency matrix) with "<<current_size<<" elements. Time test"<<endl;
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        print_dijkstra(dijkstra(current_graph,0),current_size);
+                                    }
                             }
                         }else{
                             cout<<"Cannot recognize "<<test_type<<" type of test.";
@@ -353,7 +376,7 @@ int main(){
                         if(operation == "MST"){
                             if(test_type == "time"){
                                 for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    cout<<"Computing MST on "<<graph_type<<" graph (adjacency matrix) with "<<current_size<<" elements. Time test"<<endl;
                                     high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
@@ -376,7 +399,7 @@ int main(){
                             }
                         }else if(test_type == "print"){
                             for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    cout<<"Computing MST on "<<graph_type<<" graph (adjacency matrix) with "<<current_size<<" elements"<<endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
                                     adjacency_matrix *mst = new adjacency_matrix();
                                     for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
@@ -401,7 +424,14 @@ int main(){
                             }
                         }else if(test_type == "print"){
                             for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                            
+                                cout<<"Computing shortest paths on "<<graph_type<<" graph (adjacency matrix) with "<<current_size<<" elements. Time test"<<endl;
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_undir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        print_dijkstra(dijkstra(current_graph,0),current_size);
+                                    }
                             }
                         }else{
                             cout<<"Cannot recognize "<<test_type<<" type of test.";
@@ -409,9 +439,6 @@ int main(){
                     }else{
                         cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
                     }
-
-
-
                     }else{
                         cout<<"Cannot recognize "<<graph_type<<" type of graph.";
                     }
