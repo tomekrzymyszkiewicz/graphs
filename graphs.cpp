@@ -298,15 +298,11 @@ int main(){
                                     high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                     duration<double> time_span = duration<double>(0);
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
-                                    // random_device rd;
-                                    // mt19937 gen(time(nullptr));
-                                    // uniform_int_distribution<> dis(0, current_size-1);
                                     for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
                                         current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
                                     }
                                     t_start = high_resolution_clock::now();
                                     for(int repeat = 0; repeat < number_of_repeats; repeat++){
-                                        // int random_start_vertex = dis(gen);
                                         prim(current_graph,0);
                                     }
                                     t_end = high_resolution_clock::now();
@@ -323,15 +319,10 @@ int main(){
                                     cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
                                     adjacency_matrix current_graph = adjacency_matrix(current_size);
                                     adjacency_matrix *mst = new adjacency_matrix();
-                                    // random_device rd;
-                                    // mt19937 gen(time(nullptr));
-                                    // uniform_int_distribution<> dis(0, current_size-1);
                                     for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
                                         current_graph.add_edge_dir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
                                     }
                                     for(int repeat = 0; repeat < number_of_repeats; repeat++){
-                                        // int random_start_vertex = dis(gen);
-                                        // cout<<"MST from vertex: "<<random_start_vertex<<endl;
                                         mst = prim(current_graph,0);
                                         mst->print();
                                     }
@@ -359,6 +350,67 @@ int main(){
                         cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
                     }
                     }else if(graph_type == "undirected"){
+                        if(operation == "MST"){
+                            if(test_type == "time"){
+                                for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    high_resolution_clock::time_point t_start = high_resolution_clock::now();
+                                    high_resolution_clock::time_point t_end = high_resolution_clock::now();
+                                    duration<double> time_span = duration<double>(0);
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_undir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    t_start = high_resolution_clock::now();
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        prim(current_graph,0);
+                                    }
+                                    t_end = high_resolution_clock::now();
+                                    time_span = duration_cast<duration<double>>(t_end - t_start);
+                                    Result adjacency_matrix_undir_MST = Result(structure,graph_type,operation,current_size,time_span.count(),number_of_repeats,test_type);
+                                    results.push_back(adjacency_matrix_undir_MST.toString());
+                                }
+                        }else if(test_type == "memory"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else if(test_type == "print"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                                    cout<<"Computing MST on adjacency matrix with "<<current_size<<" elements. Time test"<<endl;
+                                    adjacency_matrix current_graph = adjacency_matrix(current_size);
+                                    adjacency_matrix *mst = new adjacency_matrix();
+                                    for(int j = 0; graph_data[j].source < current_size && j < graph_data.size(); j++){
+                                        current_graph.add_edge_undir(graph_data[j].source,graph_data[j].destination,graph_data[j].weight);
+                                    }
+                                    for(int repeat = 0; repeat < number_of_repeats; repeat++){
+                                        mst = prim(current_graph,0);
+                                        mst->print();
+                                    }
+                            }
+                        }else{
+                            cout<<"Cannot recognize "<<test_type<<" type of test.";
+                        }
+                    }else if(operation == "shortest_paths"){
+                        if(test_type == "time"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else if(test_type == "memory"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else if(test_type == "print"){
+                            for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            
+                            }
+                        }else{
+                            cout<<"Cannot recognize "<<test_type<<" type of test.";
+                        }
+                    }else{
+                        cout<<"Cannot recognize operation "<<operation<<" in "<<structure<<" structure."; 
+                    }
+
+
 
                     }else{
                         cout<<"Cannot recognize "<<graph_type<<" type of graph.";
