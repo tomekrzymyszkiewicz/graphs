@@ -2,7 +2,7 @@
 
 The project aims to test the implementation of graphs in the implementation of algorithms for determining MST and shortest paths
 
-## Testing algorithms
+## Testing algorithms (with different sizes)
 
 ---
 
