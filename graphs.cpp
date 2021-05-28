@@ -420,6 +420,7 @@ int main()
                             }
                             else if (test_type == "memory")
                             {
+                                
                             }
                             else if (test_type == "print")
                             {
@@ -581,6 +582,19 @@ int main()
                             }
                             else if (test_type == "memory")
                             {
+                                int mem_size = 0;
+                                for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                {
+                                    mem_size += sizeof(adjacency_list::list_node) * number_of_current_graph_edges; //original graph
+                                    mem_size += 2*sizeof(int)*number_of_current_graph_vertices; //array of pointers
+                                    mem_size += sizeof(adjacency_list::list_node) * (number_of_current_graph_vertices-1); //mst graph
+                                    mem_size += sizeof(bool)*number_of_current_graph_vertices; //visited array
+                                    mem_size += sizeof(int); //mst weight
+                                    mem_size += sizeof(int); //current vertex
+                                    mem_size += sizeof(node)*number_of_current_graph_edges; //max priority queue size
+                                }
+                                Result mem_test = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, mem_size, number_of_repeats, test_type);
+                                results.push_back(mem_test.toString());
                             }
                             else if (test_type == "print")
                             {
@@ -674,6 +688,19 @@ int main()
                             }
                             else if (test_type == "memory")
                             {
+                                int mem_size = 0;
+                                for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                {
+                                    mem_size += sizeof(adjacency_list::list_node) * number_of_current_graph_edges; //original graph
+                                    mem_size += 2*sizeof(int)*number_of_current_graph_vertices; //array of pointers
+                                    mem_size += sizeof(adjacency_list::list_node) * (number_of_current_graph_vertices-1); //mst graph
+                                    mem_size += sizeof(bool)*number_of_current_graph_vertices; //visited array
+                                    mem_size += sizeof(int); //mst weight
+                                    mem_size += sizeof(int); //current vertex
+                                    mem_size += sizeof(node)*number_of_current_graph_edges; //max priority queue size
+                                }
+                                Result mem_test = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, mem_size, number_of_repeats, test_type);
+                                results.push_back(mem_test.toString());
                             }
                             else if (test_type == "print")
                             {
