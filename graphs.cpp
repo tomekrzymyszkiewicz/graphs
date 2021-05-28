@@ -204,7 +204,7 @@ struct Result
     double time_memory;
     int number_of_repeats;
     string test_type;
-    Result(string structure, string operation, string graph_type, int number_of_vertices, int number_of_edges, double time_memory, int number_of_repeats, string test_type)
+    Result(string structure, string graph_type, string operation, int number_of_vertices, int number_of_edges, double time_memory, int number_of_repeats, string test_type)
     {
         this->structure = structure;
         this->operation = operation;
@@ -226,7 +226,7 @@ void save_results(string results_file_name)
     std::cout << "Saving results" << endl;
     fstream fout;
     fout.open(results_file_name, ios::out);
-    fout << "structure,graph_type,operation,number_of_vertices,number_of_edges,time_memory,test_type,number_of_repeats" << endl;
+    fout << "structure,graph_type,operation,number_of_vertices,number_of_edges,time_memory,number_of_repeats,test_type" << endl;
     for (int i = 0; i < results.size(); i++)
     {
         fout << results[i] << endl;
@@ -247,7 +247,7 @@ bool load_data(string file_name)
         return false;
     }
     string loaded_source, loaded_destination, loaded_weight;
-    int data_loaded = 0;
+    int edges_loaded = 0;
     number_of_current_graph_vertices = 0;
     number_of_current_graph_edges = 0;
     while (!fin.eof())
@@ -259,10 +259,10 @@ bool load_data(string file_name)
             number_of_current_graph_edges += 1;
             if (number_of_current_graph_vertices < stoi(loaded_destination) + 1)
                 number_of_current_graph_vertices = stoi(loaded_destination) + 1;
+            edges_loaded++;
         }
-        data_loaded++;
     }
-    std::cout << "Loaded correctly " << data_loaded << " edges" << endl;
+    std::cout << "Loaded correctly " << edges_loaded << " edges and "<<number_of_current_graph_vertices <<" vertices"<< endl;
     fin.close();
     return true;
 }
