@@ -199,23 +199,25 @@ struct Result
     string structure;
     string operation;
     string graph_type;
-    int size_of_structure;
+    int number_of_vertices;
+    int number_of_edges;
     double time_memory;
     int number_of_repeats;
     string test_type;
-    Result(string structure, string operation, string graph_type, int size_of_structure, double time_memory, int number_of_repeats, string test_type)
+    Result(string structure, string operation, string graph_type, int number_of_vertices, int number_of_edges, double time_memory, int number_of_repeats, string test_type)
     {
         this->structure = structure;
         this->operation = operation;
         this->graph_type = graph_type;
-        this->size_of_structure = size_of_structure;
+        this->number_of_vertices = number_of_vertices;
+        this->number_of_edges = number_of_edges;
         this->time_memory = time_memory;
         this->number_of_repeats = number_of_repeats;
         this->test_type = test_type;
     }
     string toString()
     {
-        return (structure + "," + graph_type + "," + operation + "," + to_string(size_of_structure) + "," + to_string(time_memory) + "," + to_string(number_of_repeats) + "," + test_type);
+        return (structure + "," + graph_type + "," + operation + "," + to_string(number_of_vertices) + "," + to_string(number_of_edges) + "," + to_string(time_memory) + "," + to_string(number_of_repeats) + "," + test_type);
     }
 };
 
@@ -224,7 +226,7 @@ void save_results(string results_file_name)
     std::cout << "Saving results" << endl;
     fstream fout;
     fout.open(results_file_name, ios::out);
-    fout << "structure,graph_type,operation,size_of_structure,test_type,number_of_repeats" << endl;
+    fout << "structure,graph_type,operation,number_of_vertices,number_of_edges,time_memory,test_type,number_of_repeats" << endl;
     for (int i = 0; i < results.size(); i++)
     {
         fout << results[i] << endl;
@@ -248,7 +250,7 @@ bool load_data(string file_name)
     int data_loaded = 0;
     number_of_current_graph_vertices = 0;
     number_of_current_graph_edges = 0;
-    while(!fin.eof())
+    while (!fin.eof())
     {
         fin >> loaded_source >> loaded_destination >> loaded_weight;
         if (!fin.eof())
@@ -278,7 +280,6 @@ void load_config()
     }
     vector<string> row;
     string line;
-    // fin >> data_file_name >>number_of_current_graph_vertices;
     fin >> results_file_name;
     while (!fin.eof())
     {
@@ -323,9 +324,9 @@ int main()
             string test_type = tasks[i][5];
             if (!load_data(graph_file_name))
             {
-                std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
+                std::cout << "Cannot load graph from " << data_file_name << " file." << endl;
             }
-            std::cout << "Computing " << operation << " in " << structure << " graph with " << number_of_current_graph_edges << " edges and " << number_of_current_graph_vertices << " vertices repeated " << number_of_repeats << " times; " <<test_type<<" test" <<endl;
+            std::cout << "Computing " << operation << " in " << structure << " graph with " << number_of_current_graph_edges << " edges and " << number_of_current_graph_vertices << " vertices repeated " << number_of_repeats << " times; " << test_type << " test" << endl;
             if (number_of_current_graph_edges < 1)
             {
                 std::cout << "Cannot execute task. The array must to have at least 1 element.";
@@ -348,10 +349,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -363,7 +360,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_matrix_dir_MST = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_matrix_dir_MST = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_matrix_dir_MST.toString());
                             }
                             else if (test_type == "memory")
@@ -373,10 +370,6 @@ int main()
                             {
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
                                 adjacency_matrix *mst = new adjacency_matrix();
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -400,10 +393,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -415,7 +404,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_matrix_dir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_matrix_dir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_matrix_dir_shortest_paths.toString());
                             }
                             else if (test_type == "memory")
@@ -424,10 +413,6 @@ int main()
                             else if (test_type == "print")
                             {
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -457,10 +442,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -472,7 +453,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_matrix_undir_MST = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_matrix_undir_MST = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_matrix_undir_MST.toString());
                             }
                             else if (test_type == "memory")
@@ -482,10 +463,6 @@ int main()
                             {
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
                                 adjacency_matrix *mst = new adjacency_matrix();
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -509,10 +486,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -524,7 +497,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_matrix_undir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_matrix_undir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_matrix_undir_shortest_paths.toString());
                             }
                             else if (test_type == "memory")
@@ -533,10 +506,6 @@ int main()
                             else if (test_type == "print")
                             {
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -573,10 +542,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -588,7 +553,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_list_dir_MST = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_list_dir_MST = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_list_dir_MST.toString());
                             }
                             else if (test_type == "memory")
@@ -598,10 +563,6 @@ int main()
                             {
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
                                 adjacency_list *mst = new adjacency_list();
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -625,10 +586,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -640,7 +597,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_list_dir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_list_dir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_list_dir_shortest_paths.toString());
                             }
                             else if (test_type == "memory")
@@ -649,10 +606,6 @@ int main()
                             else if (test_type == "print")
                             {
                                 adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -682,10 +635,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -697,7 +646,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_list_undir_MST = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_list_undir_MST = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_list_undir_MST.toString());
                             }
                             else if (test_type == "memory")
@@ -707,10 +656,6 @@ int main()
                             {
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
                                 adjacency_list *mst = new adjacency_list();
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -734,10 +679,6 @@ int main()
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -749,7 +690,7 @@ int main()
                                 }
                                 t_end = high_resolution_clock::now();
                                 time_span = duration_cast<duration<double>>(t_end - t_start);
-                                Result adjacency_list_undir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
+                                Result adjacency_list_undir_shortest_paths = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, time_span.count(), number_of_repeats, test_type);
                                 results.push_back(adjacency_list_undir_shortest_paths.toString());
                             }
                             else if (test_type == "memory")
@@ -758,10 +699,6 @@ int main()
                             else if (test_type == "print")
                             {
                                 adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
-                                if (!load_data(graph_file_name))
-                                {
-                                    std::cout << "Cannot load " << number_of_current_graph_vertices << " numbers from " << data_file_name << " file." << endl;
-                                }
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -793,7 +730,7 @@ int main()
             }
         }
     }
-    std::cout<<endl;
+    std::cout << endl;
     save_results(results_file_name);
     std::cout << "Press any key to continue...";
     getch();
