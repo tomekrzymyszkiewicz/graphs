@@ -34,7 +34,6 @@ adjacency_matrix *prim(adjacency_matrix graph_matrix, int start_vertex)
     pq = priority_queue<node, vector<node>, node::compare>();
     for (int i = 0; i < graph_matrix.number_of_vertices - 1; i++)
     {
-        // graph_matrix.print();
         for (int j = 0; j < graph_matrix.number_of_vertices; j++)
         {
             if (graph_matrix.matrix[v][j] != 0 && !visited[j])
@@ -262,7 +261,7 @@ bool load_data(string file_name)
             edges_loaded++;
         }
     }
-    std::cout << "Loaded correctly " << edges_loaded << " edges and "<<number_of_current_graph_vertices <<" vertices"<< endl;
+    std::cout << "Loaded correctly " << edges_loaded << " edges and " << number_of_current_graph_vertices << " vertices" << endl;
     fin.close();
     return true;
 }
@@ -348,7 +347,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -365,10 +364,22 @@ int main()
                             }
                             else if (test_type == "memory")
                             {
+                                int mem_size = 0;
+                                for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                {
+                                    mem_size += sizeof(int) * number_of_current_graph_vertices * number_of_current_graph_vertices; //original graph
+                                    mem_size += sizeof(bool)*number_of_current_graph_vertices; //visited array
+                                    mem_size += sizeof(int) * number_of_current_graph_vertices * number_of_current_graph_vertices; //mst graph
+                                    mem_size += sizeof(int); //mst weight
+                                    mem_size += sizeof(int); //current vertex
+                                    mem_size += sizeof(node)*number_of_current_graph_edges; //max priority queue size
+                                }
+                                Result mem_test = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, mem_size, number_of_repeats, test_type);
+                                results.push_back(mem_test.toString());
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 adjacency_matrix *mst = new adjacency_matrix();
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
@@ -392,7 +403,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -412,7 +423,7 @@ int main()
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -441,7 +452,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -458,10 +469,22 @@ int main()
                             }
                             else if (test_type == "memory")
                             {
+                                int mem_size = 0;
+                                for (int repeat = 0; repeat < number_of_repeats; repeat++)
+                                {
+                                    mem_size += sizeof(int) * number_of_current_graph_vertices * number_of_current_graph_vertices; //original graph
+                                    mem_size += sizeof(bool)*number_of_current_graph_vertices; //visited array
+                                    mem_size += sizeof(int) * number_of_current_graph_vertices * number_of_current_graph_vertices; //mst graph
+                                    mem_size += sizeof(int); //mst weight
+                                    mem_size += sizeof(int); //current vertex
+                                    mem_size += sizeof(node)*number_of_current_graph_edges; //max priority queue size
+                                }
+                                Result mem_test = Result(structure, graph_type, operation, number_of_current_graph_vertices, number_of_current_graph_edges, mem_size, number_of_repeats, test_type);
+                                results.push_back(mem_test.toString());
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 adjacency_matrix *mst = new adjacency_matrix();
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
@@ -485,7 +508,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -505,7 +528,7 @@ int main()
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -541,7 +564,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -561,7 +584,7 @@ int main()
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 adjacency_list *mst = new adjacency_list();
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
@@ -585,7 +608,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -605,7 +628,7 @@ int main()
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_edges);
+                                adjacency_matrix current_graph = adjacency_matrix(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_dir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -634,7 +657,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -654,7 +677,7 @@ int main()
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 adjacency_list *mst = new adjacency_list();
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
@@ -678,7 +701,7 @@ int main()
                                 high_resolution_clock::time_point t_start = high_resolution_clock::now();
                                 high_resolution_clock::time_point t_end = high_resolution_clock::now();
                                 duration<double> time_span = duration<double>(0);
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
@@ -698,7 +721,7 @@ int main()
                             }
                             else if (test_type == "print")
                             {
-                                adjacency_list current_graph = adjacency_list(number_of_current_graph_edges);
+                                adjacency_list current_graph = adjacency_list(number_of_current_graph_vertices);
                                 for (int j = 0; graph_data[j].source < number_of_current_graph_edges && j < graph_data.size(); j++)
                                 {
                                     current_graph.add_edge_undir(graph_data[j].source, graph_data[j].destination, graph_data[j].weight);
