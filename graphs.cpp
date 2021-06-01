@@ -21,6 +21,30 @@ vector<node> graph_data = vector<node>();
 int number_of_current_graph_vertices = 0;
 int number_of_current_graph_edges = 0;
 
+void print_dijkstra(int **result_array, int number_of_vertices)
+{
+    for (int i = 0; i < (((number_of_vertices * 3) - 1) / 2); i++)
+        printf("=");
+    printf("SHORTEST PATHS");
+    for (int i = 0; i < (((number_of_vertices * 3) - 1) / 2); i++)
+        printf("=");
+    printf("\nINDEX       |");
+    for (int i = 0; i < number_of_vertices; i++)
+        printf("%3d", i);
+    printf("\nDISTANCE    |");
+    for (int i = 0; i < number_of_vertices; i++)
+    {
+        if (result_array[0][i] == INT_MAX)
+            printf(" in");
+        else
+            printf("%3d", result_array[0][i]);
+    }
+    printf("\nPREDECESSOR |");
+    for (int i = 0; i < number_of_vertices; i++)
+        printf("%3d", result_array[1][i]);
+    printf("\n");
+}
+
 adjacency_matrix *prim(adjacency_matrix graph_matrix, int start_vertex)
 {
     priority_queue<node, vector<node>, node::compare> pq;
@@ -144,7 +168,7 @@ int **dijkstra(adjacency_matrix graph_matrix, int start_vertex)
     paths_array[0][start_vertex] = 0;
     paths_array[1][start_vertex] = start_vertex;
     int v = start_vertex; //current vertex in algorithm
-    for (int i = 0; i < graph_matrix.number_of_vertices; i++)
+    for (int i = 0; i < graph_matrix.number_of_vertices-1; i++)
     {
         //find unvisited vertex with shortes path
         int min = INT_MAX;
@@ -169,29 +193,6 @@ int **dijkstra(adjacency_matrix graph_matrix, int start_vertex)
     return paths_array;
 }
 
-void print_dijkstra(int **result_array, int number_of_vertices)
-{
-    for (int i = 0; i < (((number_of_vertices * 3) - 1) / 2); i++)
-        printf("=");
-    printf("SHORTEST PATHS");
-    for (int i = 0; i < (((number_of_vertices * 3) - 1) / 2); i++)
-        printf("=");
-    printf("\nINDEX       |");
-    for (int i = 0; i < number_of_vertices; i++)
-        printf("%3d", i);
-    printf("\nDISTANCE    |");
-    for (int i = 0; i < number_of_vertices; i++)
-    {
-        if (result_array[0][i] == INT_MAX)
-            printf(" in");
-        else
-            printf("%3d", result_array[0][i]);
-    }
-    printf("\nPREDECESSOR |");
-    for (int i = 0; i < number_of_vertices; i++)
-        printf("%3d", result_array[1][i]);
-    printf("\n");
-}
 
 struct Result
 {
@@ -440,7 +441,7 @@ int main()
                                 }
                                 for (int repeat = 0; repeat < number_of_repeats; repeat++)
                                 {
-                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_edges);
+                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_vertices);
                                 }
                             }
                             else
@@ -555,7 +556,7 @@ int main()
                                 }
                                 for (int repeat = 0; repeat < number_of_repeats; repeat++)
                                 {
-                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_edges);
+                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_vertices);
                                 }
                             }
                             else
@@ -680,7 +681,7 @@ int main()
                                 }
                                 for (int repeat = 0; repeat < number_of_repeats; repeat++)
                                 {
-                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_edges);
+                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_vertices);
                                 }
                             }
                             else
@@ -797,7 +798,7 @@ int main()
                                 }
                                 for (int repeat = 0; repeat < number_of_repeats; repeat++)
                                 {
-                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_edges);
+                                    print_dijkstra(dijkstra(current_graph, 0), number_of_current_graph_vertices);
                                 }
                             }
                             else
