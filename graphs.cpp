@@ -130,14 +130,14 @@ int **dijkstra(adjacency_list graph_list, int start_vertex)
     int v = start_vertex; //current vertex in algorithm
     for (int i = 0; i < graph_list.number_of_vertices; i++)
     {
-        //find unvisited vertex with shortes path
+        //find unvisited vertex with shortest path
         int min = INT_MAX;
-        for (int i = 0; i < graph_list.number_of_vertices; i++)
+        for (int j = 0; j < graph_list.number_of_vertices; j++)
         {
-            if (paths_array[0][i] < min && !visited[i])
+            if (paths_array[0][j] < min && !visited[j])
             {
-                min = paths_array[0][i];
-                v = i;
+                min = paths_array[0][j];
+                v = j;
             }
         }
         for (adjacency_list::list_node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next)
@@ -170,14 +170,14 @@ int **dijkstra(adjacency_matrix graph_matrix, int start_vertex)
     int v = start_vertex; //current vertex in algorithm
     for (int i = 0; i < graph_matrix.number_of_vertices-1; i++)
     {
-        //find unvisited vertex with shortes path
+        //find unvisited vertex with shortest path
         int min = INT_MAX;
-        for (int i = 0; i < graph_matrix.number_of_vertices; i++)
+        for (int j = 0; j < graph_matrix.number_of_vertices; j++)
         {
-            if (paths_array[0][i] < min && !visited[i])
+            if (paths_array[0][j] < min && !visited[j])
             {
-                min = paths_array[0][i];
-                v = i;
+                min = paths_array[0][j];
+                v = j;
             }
         }
         for (int i = 0; i < graph_matrix.number_of_vertices; i++)
