@@ -142,7 +142,7 @@ int **dijkstra(adjacency_list graph_list, int start_vertex)
         }
         for (adjacency_list::list_node *current_node = graph_list.array_of_lists[v]; current_node != nullptr; current_node = current_node->next)
         {
-            if (current_node && paths_array[0][v] + current_node->weight < paths_array[0][current_node->dst] && !visited[v])
+            if (current_node && paths_array[0][v] + current_node->weight < paths_array[0][current_node->dst] && !visited[current_node->dst])
             {
                 paths_array[0][current_node->dst] = paths_array[0][v] + current_node->weight;
                 paths_array[1][current_node->dst] = v;
@@ -182,7 +182,7 @@ int **dijkstra(adjacency_matrix graph_matrix, int start_vertex)
         }
         for (int j = 0; j < graph_matrix.number_of_vertices; j++)
         { //v - source i - destination value - weight
-            if (graph_matrix.matrix[v][j] != 0 && paths_array[0][v] + graph_matrix.matrix[v][j] < paths_array[0][j] && !visited[v])
+            if (graph_matrix.matrix[v][j] != 0 && paths_array[0][v] + graph_matrix.matrix[v][j] < paths_array[0][j] && !visited[j])
             {
                 paths_array[0][j] = paths_array[0][v] + graph_matrix.matrix[v][j];
                 paths_array[1][j] = v;
