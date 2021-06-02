@@ -180,12 +180,12 @@ int **dijkstra(adjacency_matrix graph_matrix, int start_vertex)
                 v = j;
             }
         }
-        for (int i = 0; i < graph_matrix.number_of_vertices; i++)
+        for (int j = 0; j < graph_matrix.number_of_vertices; j++)
         { //v - source i - destination value - weight
-            if (graph_matrix.matrix[v][i] != 0 && paths_array[0][v] + graph_matrix.matrix[v][i] < paths_array[0][i] && !visited[v])
+            if (graph_matrix.matrix[v][j] != 0 && paths_array[0][v] + graph_matrix.matrix[v][j] < paths_array[0][j] && !visited[v])
             {
-                paths_array[0][i] = paths_array[0][v] + graph_matrix.matrix[v][i];
-                paths_array[1][i] = v;
+                paths_array[0][j] = paths_array[0][v] + graph_matrix.matrix[v][j];
+                paths_array[1][j] = v;
             }
         }
         visited[v] = true;
