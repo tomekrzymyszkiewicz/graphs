@@ -39,3 +39,7 @@ density = <density of graph>
 min_weight = <minimum weight of edge>
 max_weight = <maximum weight of edge>
 ```
+
+## Documentation
+
+<object data="documentation.pdf" type="application/pdf" width = "100%"></object>
